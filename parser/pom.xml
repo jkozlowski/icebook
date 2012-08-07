@@ -7,21 +7,21 @@
     <parent>
         <groupId>icebook</groupId>
         <artifactId>parent</artifactId>
-        <version>0.1-SNAPSHOT</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
 
     <groupId>icebook</groupId>
     <artifactId>parser</artifactId>
-    <version>0.1-SNAPSHOT</version>
-    <name>${project.groupId}-${project.artifactId}</name>
+    <version>1.0-SNAPSHOT</version>
+    <name>${project.groupId}.${project.artifactId}</name>
     <description>Defines the grammar for parsing the input into new orders.</description>
     <packaging>jar</packaging>
 
-    <properties>
-        <bundle.namespace>${project.groupId}.utils</bundle.namespace>
-    </properties>
-
     <dependencies>
+        <dependency>
+            <groupId>jparsec</groupId>
+            <artifactId>jparsec</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
