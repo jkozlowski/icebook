@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>icebook</groupId>
+    <artifactId>parent</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>${project.groupId}-${project.artifactId}</name>
+    <description>icebook - Simple simulator for SETS iceberg order book in Java.</description>
+
+    <developers>
+        <developer>
+            <id>jkozlowski</id>
+            <name>Jakub D Kozlowski</name>
+            <email>mail@jakub-kozlowski.com</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <organization>UCL</organization>
+        </developer>
+    </developers>
+
+    <properties>
+        <current.version>0.1-SNAPSHOT</current.version>
+        <testng.version>6.3</testng.version>
+        <guava.version>13.0</guava.version>
+        <hamcrest.version>1.1</hamcrest.version>
+        <mockito.version>1.9.0</mockito.version>
+        <maven.compiler.version>2.3.2</maven.compiler.version>
+        <maven.clean.version>2.4.1</maven.clean.version>
+        <maven.assembly.version>2.2.1</maven.assembly.version>
+        <maven.cobertura.version>2.5.1</maven.cobertura.version>
+        <maven.surefire.version>2.10</maven.surefire.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>${testng.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-core</artifactId>
+                <version>${hamcrest.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-all</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven.compiler.version}</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven.surefire.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>
