@@ -30,22 +30,22 @@ import static org.mockito.Mockito.when;
 public class FormattersTest {
 
     @Test(expectedExceptions = NullPointerException.class)
-    public void testAppendTimesNullSb() throws IOException {
-        Formatters.appendTimes(null, '-', 1);
+    public void testAppendNullOut() throws IOException {
+        Formatters.append(null, mock(SortedSet.class), mock(SortedSet.class));
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testAppendTimesWrongTimes() throws IOException {
-        Formatters.appendTimes(new StringBuilder(), '-', 0);
+    @Test(expectedExceptions = NullPointerException.class)
+    public void testAppendNullsellOrders() throws IOException {
+        Formatters.append(mock(Appendable.class), null, mock(SortedSet.class));
+    }
+
+    @Test(expectedExceptions = NullPointerException.class)
+    public void testAppendNullBuyOrders() throws IOException {
+        Formatters.append(mock(Appendable.class), mock(SortedSet.class), null);
     }
 
     @Test
-    public void testAppendTimes() throws IOException {
-        assertThat(Formatters.appendTimes(new StringBuilder(), '.', 5).toString(), is("....."));
-    }
-
-    @Test
-    public void testFormat() throws IOException {
+    public void testAppend() throws IOException {
         final List<Order> buyOrdersList = Lists.newArrayList();
         buyOrdersList.add(Orders.newLimitOrder(Side.BUY, 1234567890, 32503, 1234567890));
         buyOrdersList.add(Orders.newLimitOrder(Side.BUY, 1138, 31502, 7500));
@@ -70,6 +70,6 @@ public class FormattersTest {
                 + "|      1138|        7,500| 31,502| 32,505|        7,777|      6808|\n"
                 + "|          |             |       | 32,507|        3,000|     42100|\n"
                 + "+-----------------------------------------------------------------+\n";
-        assertThat(Formatters.format(new StringBuilder(), sellOrders, buyOrders).toString(), is(expected));
+        assertThat(Formatters.append(new StringBuilder(), sellOrders, buyOrders).toString(), is(expected));
     }
 }

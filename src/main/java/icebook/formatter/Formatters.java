@@ -10,7 +10,6 @@ import icebook.order.LimitOrder;
 import icebook.order.Order;
 import icebook.order.Side;
 
-import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Formatter;
@@ -18,7 +17,6 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.SortedSet;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -29,15 +27,45 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class Formatters {
 
-    public static final int ID_COLUMN_WIDTH = 10;
-
-    public static final int VOLUME_COLUMN_WIDTH = 13;
-
-    public static final int PRICE_COLUMN_WIDTH = 7;
-
-    public static final int TOTAL_COLUMN_WIDTH = 67;
-
-    public static Appendable format(final @Nonnull Appendable out,
+    /**
+     * Appends to {@code out} a formatted representation of {@code sellOrders} and {@code buyOrders},
+     * e.g. the following list of orders:
+     *
+     * <h2>BUY[Id, Volume, Price]</h2>
+     * <ol>
+     * <li>1234567890, 1234567890, 32503</li>
+     * <li>1138, 7500, 31502</li>
+     * </ol>
+     *
+     * <h2>SELL[Id, Volume, Price]</h2>
+     * <ol>
+     * <li>1234567891, 1234567890, 32504</li>
+     * <li>6808, 7777, 32505</li>
+     * <li>42100, 3000, 32507</li>
+     * </ol>
+     *
+     * will be rendered as:
+     *
+     * <pre>
+     * +-----------------------------------------------------------------+
+     * | BUY                            | SELL                           |
+     * | Id       | Volume      | Price | Price | Volume      | Id       |
+     * +----------+-------------+-------+-------+-------------+----------+
+     * |1234567890|1,234,567,890| 32,503| 32,504|1,234,567,890|1234567891|
+     * |      1138|        7,500| 31,502| 32,505|        7,777|      6808|
+     * |          |             |       | 32,507|        3,000|     42100|
+     * +-----------------------------------------------------------------+
+     * </pre>
+     *
+     * @param out        {@link Appendable} to append to.
+     * @param sellOrders {@link Side#SELL} {@link Order}s to render.
+     * @param buyOrders  {@link Side#BUY} {@link Order}s to render.
+     *
+     * @return a reference to {@code out}.
+     *
+     * @throws IOException If an I/O error occurs.
+     */
+    public static Appendable append(final @Nonnull Appendable out,
                                     final @Nonnull SortedSet<Order> sellOrders,
                                     final @Nonnull SortedSet<Order> buyOrders) throws IOException {
 
@@ -47,6 +75,7 @@ public final class Formatters {
 
         final Formatter format = new Formatter(out, Locale.ENGLISH);
 
+        // No actual formatting, because this way the header is much more readable in source code.
         format.format("+-----------------------------------------------------------------+%n");
         format.format("| BUY                            | SELL                           |%n");
         format.format("| Id       | Volume      | Price | Price | Volume      | Id       |%n");
@@ -58,6 +87,7 @@ public final class Formatters {
 
             if (buyOrdersIterator.hasNext()) {
                 final LimitOrder buyOrder = (LimitOrder) buyOrdersIterator.next();
+                // I used magic values, so that the append string is easier to read.
                 format.format("|%10d|%,13d|%,7d|", buyOrder.id, buyOrder.quantity, buyOrder.price);
             }
             else {
@@ -66,6 +96,7 @@ public final class Formatters {
 
             if (sellOrdersIterator.hasNext()) {
                 final LimitOrder sellOrder = (LimitOrder) sellOrdersIterator.next();
+                // Likewise.
                 format.format("%,7d|%,13d|%10d|", sellOrder.price, sellOrder.quantity, sellOrder.id);
             }
             else {
@@ -79,31 +110,4 @@ public final class Formatters {
 
         return out;
     }
-
-    /**
-     * Appends {@code c} to {@code out} the number of times indicated by {@code times}.
-     *
-     * @param out   {@link Appendable} to append to.
-     * @param c     character to append.
-     * @param times indicates the number of times to append {@code c} to {@code out}.
-     *
-     * @return the {@code out} for easy chaining.
-     *
-     * @throws NullPointerException     if {@code out} is null.
-     * @throws IllegalArgumentException if {@code times <= 0}.
-     */
-    static Appendable appendTimes(final @Nonnull Appendable out,
-                                  final char c,
-                                  final @Nonnegative int times) throws IOException {
-
-        checkNotNull(out);
-        checkArgument(times > 0);
-
-        for (int i = 0; i < times; i++) {
-            out.append(c);
-        }
-
-        return out;
-    }
-
 }
