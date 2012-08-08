@@ -8,7 +8,6 @@ package icebook.parser;
 
 import org.codehaus.jparsec.Parser;
 import org.codehaus.jparsec.Scanners;
-import org.codehaus.jparsec.pattern.CharPredicates;
 
 /**
  * Defines the grammar for parsing the input into new orders.
@@ -16,7 +15,22 @@ import org.codehaus.jparsec.pattern.CharPredicates;
  * @author Jakub D Kozlowski
  * @since 1.0
  */
-final class InputParsers {
+final class Grammar {
+
+    /**
+     * Factory class.
+     */
+    private Grammar() {
+    }
+
+    /**
+     * Gets a {@link Parser} for whitespace.
+     *
+     * @return a {@link Parser} for comments.
+     */
+    public static final Parser<?> whitespace() {
+        return Scanners.WHITESPACES;
+    }
 
     /**
      * Gets a {@link Parser} for comments.
@@ -24,6 +38,6 @@ final class InputParsers {
      * @return a {@link Parser} for comments.
      */
     public static final Parser<?> comment() {
-        return Scanners.WHITESPACES.next(Scanners.isChar('#')).next(Scanners.isChar(CharPredicates.ALWAYS).many_());
+        return Scanners.WHITESPACES.next(Scanners.isChar('#')).next(Scanners.ANY_CHAR.many_());
     }
 }
