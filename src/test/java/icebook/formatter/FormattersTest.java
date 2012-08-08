@@ -6,7 +6,12 @@
 
 package icebook.formatter;
 
+import icebook.order.Order;
+import org.mockito.Mockito;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
+import java.util.SortedSet;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -20,17 +25,24 @@ import static org.hamcrest.Matchers.is;
 public class FormattersTest {
 
     @Test(expectedExceptions = NullPointerException.class)
-    public void testAppendTimesNullSb() {
+    public void testAppendTimesNullSb() throws IOException {
         Formatters.appendTimes(null, '-', 1);
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testAppendTimesWrongTimes() {
+    public void testAppendTimesWrongTimes() throws IOException {
         Formatters.appendTimes(new StringBuilder(), '-', 0);
     }
 
     @Test
-    public void testAppendTimes() {
+    public void testAppendTimes() throws IOException {
         assertThat(Formatters.appendTimes(new StringBuilder(), '.', 5).toString(), is("....."));
+    }
+
+    @Test
+    public void testFormat() throws IOException {
+        final SortedSet<Order> orders = Mockito.mock(SortedSet.class);
+        assertThat(Formatters.format(new StringBuilder(), orders, orders).toString(),
+                   is("+-----------------------------------------------------------------+"));
     }
 }

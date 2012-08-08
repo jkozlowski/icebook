@@ -6,13 +6,12 @@
 
 package icebook.formatter;
 
-import com.google.common.collect.DiscreteDomains;
-import com.google.common.collect.Ranges;
 import icebook.order.Order;
 import icebook.order.Side;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import java.io.IOException;
 import java.util.Formatter;
 import java.util.Locale;
 import java.util.SortedSet;
@@ -36,36 +35,50 @@ public final class Formatters {
 
     public static final int TOTAL_COLUMN_WIDTH = 67;
 
-    public static String format(final SortedSet<Order> sellOrders, final SortedSet<Order> buyOrders) {
+    public static final int TOP_FORMATTING_MARKERS_WIDTH = 2;
 
-        final StringBuilder sb = new StringBuilder();
-        final Formatter format = new Formatter(sb, Locale.ENGLISH);
+    public static final int TOP_DASH_WIDTH = TOTAL_COLUMN_WIDTH - TOP_FORMATTING_MARKERS_WIDTH;
 
-        return null;
+    public static Appendable format(final @Nonnull Appendable append,
+                                    final @Nonnull SortedSet<Order> sellOrders,
+                                    final @Nonnull SortedSet<Order> buyOrders) throws IOException {
+
+        checkNotNull(append);
+        checkNotNull(sellOrders);
+        checkNotNull(buyOrders);
+
+        final Formatter format = new Formatter(append, Locale.ENGLISH);
+
+        // Top line
+        appendTimes(append.append('+'), '-', TOP_DASH_WIDTH).append('+');
+
+        return append;
     }
 
     /**
-     * Appends {@code c} to {@code sb} the number of times indicated by {@code times}.
+     * Appends {@code c} to {@code out} the number of times indicated by {@code times}.
      *
-     * @param sb    {@link StringBuilder} to append to.
+     * @param out   {@link Appendable} to append to.
      * @param c     character to append.
-     * @param times indicates the number of times to append {@code c} to {@code sb}.
+     * @param times indicates the number of times to append {@code c} to {@code out}.
      *
-     * @return the {@code sb} for easy chaining.
+     * @return the {@code out} for easy chaining.
      *
-     * @throws NullPointerException     if {@code sb} is null.
+     * @throws NullPointerException     if {@code out} is null.
      * @throws IllegalArgumentException if {@code times <= 0}.
      */
-    static StringBuilder appendTimes(final @Nonnull StringBuilder sb, final char c, final @Nonnegative int times) {
+    static Appendable appendTimes(final @Nonnull Appendable out,
+                                  final char c,
+                                  final @Nonnegative int times) throws IOException {
 
-        checkNotNull(sb);
+        checkNotNull(out);
         checkArgument(times > 0);
 
-        for (int counter : Ranges.closed(1, times).asSet(DiscreteDomains.integers())) {
-            sb.append(c);
+        for (int i = 0; i < times; i++) {
+            out.append(c);
         }
 
-        return sb;
+        return out;
     }
 
 }
