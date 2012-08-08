@@ -29,6 +29,8 @@ public class GrammarTest {
         final Parser<Tuple4<Side, Integer, Integer, Integer>> limitOrder = Grammar.limitOrder();
         assertThat(limitOrder.parse("B,100322,5103,7500"),
                    is(new Tuple4<Side, Integer, Integer, Integer>(Side.BUY, 100322, 5103, 7500)));
+        assertThat(limitOrder.parse("S,5103,7500,100322"),
+                   is(new Tuple4<Side, Integer, Integer, Integer>(Side.SELL, 5103, 7500, 100322)));
     }
 
     @Test(expectedExceptions = NullPointerException.class)
