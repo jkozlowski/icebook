@@ -27,6 +27,7 @@
         <current.version>1.0-SNAPSHOT</current.version>
         <java.version>1.6</java.version>
         <guava.version>13.0</guava.version>
+        <jsr305.version>2.0.0</jsr305.version>
         <jparsec.version>2.0</jparsec.version>
         <testng.version>6.3</testng.version>
         <hamcrest.version>1.1</hamcrest.version>
@@ -43,6 +44,11 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>${jsr305.version}</version>
         </dependency>
         <dependency>
             <groupId>jparsec</groupId>
