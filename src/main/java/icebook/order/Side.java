@@ -33,5 +33,14 @@ public enum Side {
     public boolean isBuy() {
         return BUY == this;
     }
+
+    /**
+     * Gets the opposite {@link Side}.
+     *
+     * @return the opposite {@link Side}.
+     */
+    public Side getOpposite() {
+        return isBuy() ? SELL : BUY;
+    }
 }
 

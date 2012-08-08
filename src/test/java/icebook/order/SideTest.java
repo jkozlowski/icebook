@@ -20,6 +20,12 @@ import static org.hamcrest.Matchers.is;
 public class SideTest {
 
     @Test
+    public void testGetOpposite() {
+        assertThat(Side.SELL.getOpposite(), is(Side.BUY));
+        assertThat(Side.BUY.getOpposite(), is(Side.SELL));
+    }
+
+    @Test
     public void testIsSell() {
         assertThat(Side.SELL.isSell(), is(Boolean.TRUE));
         assertThat(Side.BUY.isSell(), is(Boolean.FALSE));
