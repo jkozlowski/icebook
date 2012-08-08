@@ -4,7 +4,7 @@
  * (See accompanying file LICENSE)
  */
 
-package icebook.parser.internal;
+package icebook.parser;
 
 import org.codehaus.jparsec.Parser;
 import org.testng.annotations.Test;
