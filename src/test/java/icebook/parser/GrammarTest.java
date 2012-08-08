@@ -6,10 +6,13 @@
 
 package icebook.parser;
 
+import icebook.order.Side;
 import org.codehaus.jparsec.Parser;
 import org.testng.annotations.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
 /**
@@ -19,6 +22,24 @@ import static org.hamcrest.Matchers.nullValue;
  * @since 1.0
  */
 public class GrammarTest {
+
+    @Test
+    public void testSellSideParser() {
+        final Parser<Side> sellSide = Grammar.sell();
+        assertThat(sellSide.parse("S"), is(Side.SELL));
+    }
+
+    @Test
+    public void testBuySideParser() {
+        final Parser<Side> buySide = Grammar.buy();
+        assertThat(buySide.parse("B"), is(Side.BUY));
+    }
+
+    @Test
+    public void testLimitOrderParser() {
+        final Parser<?> limitOrder = Grammar.limitOrder();
+        assertThat(limitOrder, notNullValue());
+    }
 
     @Test
     public void testCommentParser() {
