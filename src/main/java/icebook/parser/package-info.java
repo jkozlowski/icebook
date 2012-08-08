@@ -5,9 +5,11 @@
  */
 
 /**
- * Classes that define the grammar for parsing the input into new orders.
+ * Defines the parser for {@link Order}s.
  *
  * @author Jakub D Kozlowski
  * @since 1.0
  */
 package icebook.parser;
+
+import icebook.order.Order;
