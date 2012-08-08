@@ -12,6 +12,13 @@ import org.codehaus.jparsec.Parsers;
 import org.codehaus.jparsec.Scanners;
 import org.codehaus.jparsec._;
 import org.codehaus.jparsec.functors.Map;
+import org.codehaus.jparsec.functors.Map2;
+import org.codehaus.jparsec.functors.Map4;
+import org.codehaus.jparsec.functors.Tuple4;
+
+import javax.annotation.Nonnull;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Defines the grammar for parsing the input into new orders.
@@ -32,8 +39,41 @@ final class Grammar {
      *
      * @return a {@link Parser} for a limit order.
      */
-    public static final Parser<?> limitOrder() {
-        return Parsers.or(buy(), sell());
+    public static final Parser<Tuple4<Side, Integer, Integer, Integer>> limitOrder() {
+        return Parsers.sequence(
+                followedByComma(Parsers.or(buy(), sell())),
+                followedByComma(Scanners.INTEGER),
+                followedByComma(Scanners.INTEGER),
+                Scanners.INTEGER,
+                new Map4<Side, String, String, String, Tuple4<Side, Integer, Integer, Integer>>() {
+                    @Override
+                    public Tuple4<Side, Integer, Integer, Integer> map(Side side, String s, String s1, String s2) {
+                        return new Tuple4<Side, Integer, Integer, Integer>(side,
+                                                                           Integer.parseInt(s),
+                                                                           Integer.parseInt(s1),
+                                                                           Integer.parseInt(s2));
+                    }
+                });
+    }
+
+    /**
+     * Gets a {@link Parser} that expects {@code toFollow} followed by a comma.
+     *
+     * @param toFollow parser to be followed by a comma.
+     * @param <T>      type of the parser.
+     *
+     * @return {@link Parser} that expects {@code toFollow} followed by a comma.
+     *
+     * @throws NullPointerException if {@code toFollow} is null.
+     */
+    public static final <T> Parser<T> followedByComma(final @Nonnull Parser<T> toFollow) {
+        checkNotNull(toFollow, "toFollow cannot be null.");
+        return Parsers.sequence(toFollow, Scanners.isChar(','), new Map2<T, _, T>() {
+            @Override
+            public T map(T t, _ p1) {
+                return t;
+            }
+        });
     }
 
     /**

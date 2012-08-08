@@ -8,11 +8,12 @@ package icebook.parser;
 
 import icebook.order.Side;
 import org.codehaus.jparsec.Parser;
+import org.codehaus.jparsec.Scanners;
+import org.codehaus.jparsec.functors.Tuple4;
 import org.testng.annotations.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
 /**
@@ -24,6 +25,25 @@ import static org.hamcrest.Matchers.nullValue;
 public class GrammarTest {
 
     @Test
+    public void testLimitOrderParser() {
+        final Parser<Tuple4<Side, Integer, Integer, Integer>> limitOrder = Grammar.limitOrder();
+        assertThat(limitOrder.parse("B,100322,5103,7500"),
+                   is(new Tuple4<Side, Integer, Integer, Integer>(Side.BUY, 100322, 5103, 7500)));
+    }
+
+    @Test(expectedExceptions = NullPointerException.class)
+    public void testFollowedByCommaNullToFollow() {
+        Grammar.followedByComma(null);
+    }
+
+    @Test
+    public void testFollowedByComma() {
+        final String integer = "123123";
+        final Parser<String> integerComma = Grammar.followedByComma(Scanners.INTEGER);
+        assertThat(integerComma.parse(integer + ","), is(integer));
+    }
+
+    @Test
     public void testSellSideParser() {
         final Parser<Side> sellSide = Grammar.sell();
         assertThat(sellSide.parse("S"), is(Side.SELL));
@@ -33,12 +53,6 @@ public class GrammarTest {
     public void testBuySideParser() {
         final Parser<Side> buySide = Grammar.buy();
         assertThat(buySide.parse("B"), is(Side.BUY));
-    }
-
-    @Test
-    public void testLimitOrderParser() {
-        final Parser<?> limitOrder = Grammar.limitOrder();
-        assertThat(limitOrder, notNullValue());
     }
 
     @Test
