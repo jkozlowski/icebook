@@ -6,6 +6,7 @@
 
 package icebook.formatter;
 
+import icebook.order.LimitOrder;
 import icebook.order.Order;
 import icebook.order.Side;
 
@@ -13,6 +14,7 @@ import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Formatter;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.SortedSet;
 
@@ -29,15 +31,11 @@ public final class Formatters {
 
     public static final int ID_COLUMN_WIDTH = 10;
 
-    public static final int VOLUME_COLUMN_WIDTH = 10;
+    public static final int VOLUME_COLUMN_WIDTH = 13;
 
     public static final int PRICE_COLUMN_WIDTH = 7;
 
     public static final int TOTAL_COLUMN_WIDTH = 67;
-
-    public static final int TOP_FORMATTING_MARKERS_WIDTH = 2;
-
-    public static final int TOP_DASH_WIDTH = TOTAL_COLUMN_WIDTH - TOP_FORMATTING_MARKERS_WIDTH;
 
     public static Appendable format(final @Nonnull Appendable out,
                                     final @Nonnull SortedSet<Order> sellOrders,
@@ -49,10 +47,33 @@ public final class Formatters {
 
         final Formatter format = new Formatter(out, Locale.ENGLISH);
 
-        out.append("+-----------------------------------------------------------------+\n");
-        out.append("| BUY                            | SELL                           |\n");
-        out.append("| Id       | Volume      | Price | Price | Volume      | Id       |\n");
-        out.append("+----------+-------------+-------+-------+-------------+----------+\n");
+        format.format("+-----------------------------------------------------------------+%n");
+        format.format("| BUY                            | SELL                           |%n");
+        format.format("| Id       | Volume      | Price | Price | Volume      | Id       |%n");
+        format.format("+----------+-------------+-------+-------+-------------+----------+%n");
+
+        final Iterator<Order> buyOrdersIterator = buyOrders.iterator();
+        final Iterator<Order> sellOrdersIterator = sellOrders.iterator();
+        while (sellOrdersIterator.hasNext() || buyOrdersIterator.hasNext()) {
+
+            if (buyOrdersIterator.hasNext()) {
+                final LimitOrder buyOrder = (LimitOrder) buyOrdersIterator.next();
+                format.format("|%10d|%,13d|%,7d|", buyOrder.id, buyOrder.quantity, buyOrder.price);
+            }
+            else {
+                format.format("|          |             |       |");
+            }
+
+            if (sellOrdersIterator.hasNext()) {
+                final LimitOrder sellOrder = (LimitOrder) sellOrdersIterator.next();
+                format.format("%,7d|%,13d|%10d|", sellOrder.price, sellOrder.quantity, sellOrder.id);
+            }
+            else {
+                format.format("          |             |       |");
+            }
+
+            format.format("%n");
+        }
 
         out.append("+-----------------------------------------------------------------+\n");
 

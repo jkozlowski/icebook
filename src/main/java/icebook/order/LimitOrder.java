@@ -17,7 +17,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Jakub D Kozlowski
  * @since 1.0
  */
-final class LimitOrder implements Order {
+public final class LimitOrder implements Order {
 
     public final Side side;
 
