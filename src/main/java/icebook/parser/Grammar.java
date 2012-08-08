@@ -13,8 +13,8 @@ import org.codehaus.jparsec.Scanners;
 import org.codehaus.jparsec._;
 import org.codehaus.jparsec.functors.Map;
 import org.codehaus.jparsec.functors.Map2;
-import org.codehaus.jparsec.functors.Map4;
 import org.codehaus.jparsec.functors.Tuple4;
+import org.codehaus.jparsec.misc.Mapper;
 
 import javax.annotation.Nonnull;
 
@@ -40,20 +40,19 @@ final class Grammar {
      * @return a {@link Parser} for a limit order.
      */
     public static final Parser<Tuple4<Side, Integer, Integer, Integer>> limitOrder() {
-        return Parsers.sequence(
+        return new Mapper<Tuple4<Side, Integer, Integer, Integer>>() {
+            Tuple4<Side, Integer, Integer, Integer> map(Side side, String s, String s1, String s2) {
+                return new Tuple4<Side, Integer, Integer, Integer>(side,
+                                                                   Integer.parseInt(s),
+                                                                   Integer.parseInt(s1),
+                                                                   Integer.parseInt(s2));
+            }
+        }.sequence(
                 followedByComma(Parsers.or(buy(), sell())),
                 followedByComma(Scanners.INTEGER),
                 followedByComma(Scanners.INTEGER),
-                Scanners.INTEGER,
-                new Map4<Side, String, String, String, Tuple4<Side, Integer, Integer, Integer>>() {
-                    @Override
-                    public Tuple4<Side, Integer, Integer, Integer> map(Side side, String s, String s1, String s2) {
-                        return new Tuple4<Side, Integer, Integer, Integer>(side,
-                                                                           Integer.parseInt(s),
-                                                                           Integer.parseInt(s1),
-                                                                           Integer.parseInt(s2));
-                    }
-                });
+                Scanners.INTEGER
+        );
     }
 
     /**

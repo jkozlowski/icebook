@@ -29,6 +29,7 @@
         <guava.version>13.0</guava.version>
         <jsr305.version>2.0.0</jsr305.version>
         <jparsec.version>2.0</jparsec.version>
+        <cglib.version>2.2.2</cglib.version>
         <testng.version>6.3</testng.version>
         <hamcrest.version>1.1</hamcrest.version>
         <mockito.version>1.9.0</mockito.version>
@@ -54,6 +55,11 @@
             <groupId>jparsec</groupId>
             <artifactId>jparsec</artifactId>
             <version>${jparsec.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>${cglib.version}</version>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>
