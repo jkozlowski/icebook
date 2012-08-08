@@ -14,6 +14,8 @@ import org.codehaus.jparsec._;
 import org.codehaus.jparsec.functors.Map;
 import org.codehaus.jparsec.functors.Map2;
 import org.codehaus.jparsec.functors.Tuple4;
+import org.codehaus.jparsec.functors.Tuple5;
+import org.codehaus.jparsec.functors.Tuples;
 import org.codehaus.jparsec.misc.Mapper;
 
 import javax.annotation.Nonnull;
@@ -35,6 +37,27 @@ final class Grammar {
     }
 
     /**
+     * Gets a {@link Parser} for an iceberg order.
+     *
+     * @return a {@link Parser} for an iceberg order.
+     */
+    public static final Parser<Tuple5<Side, Integer, Integer, Integer, Integer>> icebergOrder() {
+        return new Mapper<Tuple5<Side, Integer, Integer, Integer, Integer>>() {
+            Tuple5<Side, Integer, Integer, Integer, Integer> map(Side side, String s, String s1, String s2,
+                                                                 String s3) {
+                return Tuples.tuple(side, Integer.parseInt(s), Integer.parseInt(s1), Integer.parseInt(s2),
+                                    Integer.parseInt(s3));
+            }
+        }.sequence(
+                followedByComma(Parsers.or(buy(), sell())),
+                followedByComma(Scanners.INTEGER),
+                followedByComma(Scanners.INTEGER),
+                followedByComma(Scanners.INTEGER),
+                Scanners.INTEGER
+        );
+    }
+
+    /**
      * Gets a {@link Parser} for a limit order.
      *
      * @return a {@link Parser} for a limit order.
@@ -42,10 +65,7 @@ final class Grammar {
     public static final Parser<Tuple4<Side, Integer, Integer, Integer>> limitOrder() {
         return new Mapper<Tuple4<Side, Integer, Integer, Integer>>() {
             Tuple4<Side, Integer, Integer, Integer> map(Side side, String s, String s1, String s2) {
-                return new Tuple4<Side, Integer, Integer, Integer>(side,
-                                                                   Integer.parseInt(s),
-                                                                   Integer.parseInt(s1),
-                                                                   Integer.parseInt(s2));
+                return Tuples.tuple(side, Integer.parseInt(s), Integer.parseInt(s1), Integer.parseInt(s2));
             }
         }.sequence(
                 followedByComma(Parsers.or(buy(), sell())),
