@@ -42,7 +42,12 @@ public class FormattersTest {
     @Test
     public void testFormat() throws IOException {
         final SortedSet<Order> orders = Mockito.mock(SortedSet.class);
-        assertThat(Formatters.format(new StringBuilder(), orders, orders).toString(),
-                   is("+-----------------------------------------------------------------+"));
+        final String expected
+                = "+-----------------------------------------------------------------+\n"
+                + "| BUY                            | SELL                           |\n"
+                + "| Id       | Volume      | Price | Price | Volume      | Id       |\n"
+                + "+----------+-------------+-------+-------+-------------+----------+\n"
+                + "+-----------------------------------------------------------------+\n";
+        assertThat(Formatters.format(new StringBuilder(), orders, orders).toString(), is(expected));
     }
 }

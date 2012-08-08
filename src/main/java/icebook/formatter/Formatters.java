@@ -39,20 +39,24 @@ public final class Formatters {
 
     public static final int TOP_DASH_WIDTH = TOTAL_COLUMN_WIDTH - TOP_FORMATTING_MARKERS_WIDTH;
 
-    public static Appendable format(final @Nonnull Appendable append,
+    public static Appendable format(final @Nonnull Appendable out,
                                     final @Nonnull SortedSet<Order> sellOrders,
                                     final @Nonnull SortedSet<Order> buyOrders) throws IOException {
 
-        checkNotNull(append);
+        checkNotNull(out);
         checkNotNull(sellOrders);
         checkNotNull(buyOrders);
 
-        final Formatter format = new Formatter(append, Locale.ENGLISH);
+        final Formatter format = new Formatter(out, Locale.ENGLISH);
 
-        // Top line
-        appendTimes(append.append('+'), '-', TOP_DASH_WIDTH).append('+');
+        out.append("+-----------------------------------------------------------------+\n");
+        out.append("| BUY                            | SELL                           |\n");
+        out.append("| Id       | Volume      | Price | Price | Volume      | Id       |\n");
+        out.append("+----------+-------------+-------+-------+-------------+----------+\n");
 
-        return append;
+        out.append("+-----------------------------------------------------------------+\n");
+
+        return out;
     }
 
     /**
