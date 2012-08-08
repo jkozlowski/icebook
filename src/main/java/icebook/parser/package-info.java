@@ -5,7 +5,8 @@
  */
 
 /**
- * Defines the parser for {@link Order}s.
+ * Defines the parser for {@link Order}s. The decision to make use of the <em>JParsec</em> library was made for
+ * educational purposes only, consciously ignoring any potential performance degradation.
  *
  * @author Jakub D Kozlowski
  * @since 1.0
