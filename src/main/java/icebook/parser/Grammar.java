@@ -6,6 +6,8 @@
 
 package icebook.parser;
 
+import icebook.order.Order;
+import icebook.order.Orders;
 import icebook.order.Side;
 import org.codehaus.jparsec.Parser;
 import org.codehaus.jparsec.Parsers;
@@ -13,9 +15,6 @@ import org.codehaus.jparsec.Scanners;
 import org.codehaus.jparsec._;
 import org.codehaus.jparsec.functors.Map;
 import org.codehaus.jparsec.functors.Map2;
-import org.codehaus.jparsec.functors.Tuple4;
-import org.codehaus.jparsec.functors.Tuple5;
-import org.codehaus.jparsec.functors.Tuples;
 import org.codehaus.jparsec.misc.Mapper;
 
 import javax.annotation.Nonnull;
@@ -41,12 +40,11 @@ final class Grammar {
      *
      * @return a {@link Parser} for an iceberg order.
      */
-    public static final Parser<Tuple5<Side, Integer, Integer, Integer, Integer>> icebergOrder() {
-        return new Mapper<Tuple5<Side, Integer, Integer, Integer, Integer>>() {
-            Tuple5<Side, Integer, Integer, Integer, Integer> map(Side side, String s, String s1, String s2,
-                                                                 String s3) {
-                return Tuples.tuple(side, Integer.parseInt(s), Integer.parseInt(s1), Integer.parseInt(s2),
-                                    Integer.parseInt(s3));
+    public static final Parser<Order> icebergOrder() {
+        return new Mapper<Order>() {
+            Order map(Side side, String s, String s1, String s2, String s3) {
+                return Orders.newIcebergOrder(side, Integer.parseInt(s), Integer.parseInt(s1), Integer.parseInt(s2),
+                                              Integer.parseInt(s3));
             }
         }.sequence(
                 followedByComma(Parsers.or(buy(), sell())),
@@ -62,10 +60,10 @@ final class Grammar {
      *
      * @return a {@link Parser} for a limit order.
      */
-    public static final Parser<Tuple4<Side, Integer, Integer, Integer>> limitOrder() {
-        return new Mapper<Tuple4<Side, Integer, Integer, Integer>>() {
-            Tuple4<Side, Integer, Integer, Integer> map(Side side, String s, String s1, String s2) {
-                return Tuples.tuple(side, Integer.parseInt(s), Integer.parseInt(s1), Integer.parseInt(s2));
+    public static final Parser<Order> limitOrder() {
+        return new Mapper<Order>() {
+            Order map(Side side, String s, String s1, String s2) {
+                return Orders.newLimitOrder(side, Integer.parseInt(s), Integer.parseInt(s1), Integer.parseInt(s2));
             }
         }.sequence(
                 followedByComma(Parsers.or(buy(), sell())),

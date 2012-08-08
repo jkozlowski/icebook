@@ -6,12 +6,11 @@
 
 package icebook.parser;
 
+import icebook.order.Order;
+import icebook.order.Orders;
 import icebook.order.Side;
 import org.codehaus.jparsec.Parser;
 import org.codehaus.jparsec.Scanners;
-import org.codehaus.jparsec.functors.Tuple4;
-import org.codehaus.jparsec.functors.Tuple5;
-import org.codehaus.jparsec.functors.Tuples;
 import org.testng.annotations.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -28,18 +27,18 @@ public class GrammarTest {
 
     @Test
     public void testIcebergOrderParser() {
-        final Parser<Tuple5<Side, Integer, Integer, Integer, Integer>> limitOrder = Grammar.icebergOrder();
+        final Parser<Order> limitOrder = Grammar.icebergOrder();
         assertThat(limitOrder.parse("B,100345,5103,100000,10000"),
-                   is(Tuples.tuple(Side.BUY, 100345, 5103, 100000, 10000)));
+                   is(Orders.newIcebergOrder(Side.BUY, 100345, 5103, 100000, 10000)));
         assertThat(limitOrder.parse("S,5103,100000,10000,100345"),
-                   is(Tuples.tuple(Side.SELL, 5103, 100000, 10000, 100345)));
+                   is(Orders.newIcebergOrder(Side.SELL, 5103, 100000, 10000, 100345)));
     }
 
     @Test
     public void testLimitOrderParser() {
-        final Parser<Tuple4<Side, Integer, Integer, Integer>> limitOrder = Grammar.limitOrder();
-        assertThat(limitOrder.parse("B,100322,5103,7500"), is(Tuples.tuple(Side.BUY, 100322, 5103, 7500)));
-        assertThat(limitOrder.parse("S,5103,7500,100322"), is(Tuples.tuple(Side.SELL, 5103, 7500, 100322)));
+        final Parser<Order> limitOrder = Grammar.limitOrder();
+        assertThat(limitOrder.parse("B,100322,5103,7500"), is(Orders.newLimitOrder(Side.BUY, 100322, 5103, 7500)));
+        assertThat(limitOrder.parse("S,5103,7500,100322"), is(Orders.newLimitOrder(Side.SELL, 5103, 7500, 100322)));
     }
 
     @Test(expectedExceptions = NullPointerException.class)
