@@ -15,6 +15,11 @@
  * unspecified stock instrument.
  * </p>
  *
+ * <p>
+ * Similarly, prices are assumed to be quoted in pennies and sub-penny prices are prohibited; hence,
+ * prices are simply assumed to be {@code long} values.
+ * </p>
+ *
  * @author Jakub D Kozlowski
  * @since 1.0
  */
