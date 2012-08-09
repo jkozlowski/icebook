@@ -35,7 +35,7 @@ public class FormattersTest {
     }
 
     @Test(expectedExceptions = NullPointerException.class)
-    public void testAppendNullsellOrders() throws IOException {
+    public void testAppendNullSellOrders() throws IOException {
         Formatters.append(mock(Appendable.class), null, mock(SortedSet.class));
     }
 
