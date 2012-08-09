@@ -20,6 +20,10 @@
  * prices are simply assumed to be {@code long} values.
  * </p>
  *
+ * <p>
+ * Timestamps are only treated as UNIX timestamps stored in {@code long} values.
+ * </p>
+ *
  * @author Jakub D Kozlowski
  * @since 1.0
  */
