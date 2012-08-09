@@ -23,11 +23,13 @@ import static org.hamcrest.Matchers.lessThan;
  */
 public class EntryImplTest {
 
+    private static final long TIMESTAMP = 123;
+
     private static final long PRICE = 12;
 
-    private static final Entry SELL = new EntryImpl(1, 123, Side.SELL, PRICE, 130);
+    private static final Entry SELL = new EntryImpl(1, TIMESTAMP, Side.SELL, PRICE, 130);
 
-    private static final Entry BUY = new EntryImpl(1, 123, Side.BUY, PRICE, 130);
+    private static final Entry BUY = new EntryImpl(1, TIMESTAMP, Side.BUY, PRICE, 130);
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testConstructorWrongId() {
@@ -81,13 +83,25 @@ public class EntryImplTest {
 
     @Test
     public void testCompareToPriceLess() {
-        assertThat(SELL.compareTo(OrderBooks.newEntry(1, 123, Side.SELL, PRICE - 1, 3)), lessThan(0));
-        assertThat(BUY.compareTo(OrderBooks.newEntry(1, 123, Side.BUY, PRICE - 1, 3)), greaterThan(0));
+        assertThat(SELL.compareTo(OrderBooks.newEntry(1, TIMESTAMP, Side.SELL, PRICE - 1, 3)), lessThan(0));
+        assertThat(BUY.compareTo(OrderBooks.newEntry(1, TIMESTAMP, Side.BUY, PRICE - 1, 3)), greaterThan(0));
     }
 
     @Test
     public void testCompareToPriceGreater() {
-        assertThat(SELL.compareTo(OrderBooks.newEntry(1, 123, Side.SELL, PRICE + 1, 3)), greaterThan(0));
-        assertThat(BUY.compareTo(OrderBooks.newEntry(1, 123, Side.BUY, PRICE + 1, 3)), lessThan(0));
+        assertThat(SELL.compareTo(OrderBooks.newEntry(1, TIMESTAMP, Side.SELL, PRICE + 1, 3)), greaterThan(0));
+        assertThat(BUY.compareTo(OrderBooks.newEntry(1, TIMESTAMP, Side.BUY, PRICE + 1, 3)), lessThan(0));
+    }
+
+    @Test
+    public void testCompareToSamePriceEarlierTimestamp() {
+        assertThat(SELL.compareTo(OrderBooks.newEntry(1, TIMESTAMP - 1, Side.SELL, PRICE, 3)), greaterThan(0));
+        assertThat(BUY.compareTo(OrderBooks.newEntry(1, TIMESTAMP - 1, Side.BUY, PRICE, 3)), greaterThan(0));
+    }
+
+    @Test
+    public void testCompareToSamePriceLaterTimestamp() {
+        assertThat(SELL.compareTo(OrderBooks.newEntry(1, TIMESTAMP + 1, Side.SELL, PRICE, 3)), lessThan(0));
+        assertThat(BUY.compareTo(OrderBooks.newEntry(1, TIMESTAMP + 1, Side.BUY, PRICE, 3)), lessThan(0));
     }
 }

@@ -59,6 +59,18 @@ public interface OrderBook {
          * @return the volume.
          */
         long getVolume();
+
+        /**
+         * <em>Note: this class has a natural ordering that is inconsistent with equals.</em> More specifically,
+         * if {@link #compareTo(Entry)}  returns 0, the two {@link Entry}ies prices and timestamps are equal; it does
+         * not however indicate that their remaining properties are also equal by the contract of {@link
+         * #equals(Object)}.
+         *
+         * @throws NullPointerException     if {@code other} is null.
+         * @throws IllegalArgumentException if {@code other}'s {@link Side} is different.
+         */
+        @Override
+        public int compareTo(@Nonnull final Entry other);
     }
 
     /**

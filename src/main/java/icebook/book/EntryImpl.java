@@ -111,30 +111,26 @@ final class EntryImpl implements OrderBook.Entry {
 
     /**
      * {@inheritDoc}
-     *
-     * @throws NullPointerException     if {@code other} is null.
-     * @throws IllegalArgumentException if {@code other}'s {@link Side} is different.
      */
     @Override
     public int compareTo(@Nonnull final Entry other) {
 
         checkNotNull(other, "other cannot be null");
-        checkArgument(other.getSide().equals(this.side));
+        checkArgument(other.getSide().equals(this.side), "other's side must be the same.");
 
-        // Compare object references.
         if (this == other) {
             return 0;
         }
 
         if (Longs.compare(this.getPrice(), other.getPrice()) > 0) {
-            return this.getSide().isBuy() ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+            return this.side.isBuy() ? Integer.MAX_VALUE : Integer.MIN_VALUE;
         }
 
         if (Longs.compare(this.getPrice(), other.getPrice()) < 0) {
-            return this.getSide().isBuy() ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+            return this.side.isBuy() ? Integer.MIN_VALUE : Integer.MAX_VALUE;
         }
 
-        return 0;
+        return Longs.compare(this.timestamp, other.getTimestamp());
     }
 
     /**
