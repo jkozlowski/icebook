@@ -4,7 +4,7 @@
  * (See accompanying file LICENSE)
  */
 
-package icebook.formatter;
+package icebook.output;
 
 import com.google.common.collect.Lists;
 import icebook.order.Order;
@@ -22,26 +22,26 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests {@link Formatters}
+ * Tests {@link Appenders}
  *
  * @author Jakub D Kozlowski
  * @since 1.0
  */
-public class FormattersTest {
+public class AppendersTest {
 
     @Test(expectedExceptions = NullPointerException.class)
     public void testAppendNullOut() throws IOException {
-        Formatters.append(null, mock(SortedSet.class), mock(SortedSet.class));
+        Appenders.append(null, mock(SortedSet.class), mock(SortedSet.class));
     }
 
     @Test(expectedExceptions = NullPointerException.class)
     public void testAppendNullSellOrders() throws IOException {
-        Formatters.append(mock(Appendable.class), null, mock(SortedSet.class));
+        Appenders.append(mock(Appendable.class), null, mock(SortedSet.class));
     }
 
     @Test(expectedExceptions = NullPointerException.class)
     public void testAppendNullBuyOrders() throws IOException {
-        Formatters.append(mock(Appendable.class), mock(SortedSet.class), null);
+        Appenders.append(mock(Appendable.class), mock(SortedSet.class), null);
     }
 
     @Test
@@ -70,6 +70,6 @@ public class FormattersTest {
                 + "|      1138|        7,500| 31,502| 32,505|        7,777|      6808|\n"
                 + "|          |             |       | 32,507|        3,000|     42100|\n"
                 + "+-----------------------------------------------------------------+\n";
-        assertThat(Formatters.append(new StringBuilder(), sellOrders, buyOrders).toString(), is(expected));
+        assertThat(Appenders.append(new StringBuilder(), sellOrders, buyOrders).toString(), is(expected));
     }
 }

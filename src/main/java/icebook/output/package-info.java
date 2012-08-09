@@ -10,6 +10,6 @@
  * @author Jakub D Kozlowski
  * @since 1.0
  */
-package icebook.formatter;
+package icebook.output;
 
 import java.util.SortedSet;

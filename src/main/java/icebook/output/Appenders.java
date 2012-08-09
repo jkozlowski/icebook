@@ -4,7 +4,7 @@
  * (See accompanying file LICENSE)
  */
 
-package icebook.formatter;
+package icebook.output;
 
 import icebook.order.LimitOrder;
 import icebook.order.Order;
@@ -20,12 +20,15 @@ import java.util.SortedSet;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Formats {@link SortedSet}s of {@link Side#BUY} and {@link Side#SELL} {@link Order}s.
+ * Appenders that append formatted output to {@link Appendable}s.
  *
  * @author Jakub D Kozlowski
  * @since 1.0
  */
-public final class Formatters {
+public final class Appenders {
+
+    private Appenders() {
+    }
 
     /**
      * Appends to {@code out} a formatted representation of {@code sellOrders} and {@code buyOrders},
@@ -91,6 +94,7 @@ public final class Formatters {
                 format.format("|%10d|%,13d|%,7d|", buyOrder.id, buyOrder.quantity, buyOrder.price);
             }
             else {
+                // Again, this is easier to read.
                 format.format("|          |             |       |");
             }
 
@@ -100,6 +104,7 @@ public final class Formatters {
                 format.format("%,7d|%,13d|%10d|", sellOrder.price, sellOrder.quantity, sellOrder.id);
             }
             else {
+                // Likewise.
                 format.format("          |             |       |");
             }
 

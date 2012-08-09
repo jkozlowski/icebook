@@ -11,6 +11,6 @@
  * @author Jakub D Kozlowski
  * @since 1.0
  */
-package icebook.parser;
+package icebook.input;
 
 import icebook.order.Order;

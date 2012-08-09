@@ -8,8 +8,8 @@ package icebook;
 
 import com.google.common.io.CharStreams;
 import com.google.common.io.LineProcessor;
-import icebook.formatter.Formatters;
-import icebook.parser.Parsers;
+import icebook.output.Appenders;
+import icebook.input.Parsers;
 
 import java.io.IOException;
 import java.util.SortedSet;
@@ -18,7 +18,7 @@ import java.util.SortedSet;
  * Main entry point to the icebook simulator. The simulator will read the input from {@link System#in} and parse it
  * according to the grammar as defined by {@link Parsers#newOrderParser()}. Every successfully parsed order will be
  * applied to the order book and any trade messages will be printed to {@link System#out},
- * followed by the current state of the book as defined by {@link Formatters#append(Appendable, SortedSet,
+ * followed by the current state of the book as defined by {@link Appenders#append(Appendable, SortedSet,
  * SortedSet)}. Any error messages will be forwarded to {@link System#err}.
  *
  * @author Jakub D Kozlowski

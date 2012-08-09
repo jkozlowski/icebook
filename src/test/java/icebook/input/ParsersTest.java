@@ -4,7 +4,7 @@
  * (See accompanying file LICENSE)
  */
 
-package icebook.parser;
+package icebook.input;
 
 import com.google.common.base.Optional;
 import icebook.order.Order;
