@@ -90,4 +90,19 @@ public class ParsersTest {
         assertThat(comment.parse("   # "), nullValue());
         assertThat(comment.parse("   #asdasd"), nullValue());
     }
+
+    @Test(expectedExceptions = NullPointerException.class)
+    public void testMapToNullT() {
+        Parsers.mapTo(null);
+    }
+
+    @Test
+    public void testMapFirst() {
+        assertThat(Parsers.<Side>mapFirst().map(Side.SELL, null), is(Side.SELL));
+    }
+
+    @Test
+    public void testMapTo() {
+        assertThat(Parsers.mapTo(Side.BUY).map(null), is(Side.BUY));
+    }
 }

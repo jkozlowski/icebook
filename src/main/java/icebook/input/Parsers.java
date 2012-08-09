@@ -101,12 +101,7 @@ public final class Parsers {
      */
     static final <T> Parser<T> followedByComma(final @Nonnull Parser<T> toFollow) {
         checkNotNull(toFollow, "toFollow cannot be null.");
-        return org.codehaus.jparsec.Parsers.sequence(toFollow, Scanners.isChar(','), new Map2<T, _, T>() {
-            @Override
-            public T map(T t, _ p1) {
-                return t;
-            }
-        });
+        return org.codehaus.jparsec.Parsers.sequence(toFollow, Scanners.isChar(','), Parsers.<T>mapFirst());
     }
 
     /**
@@ -115,12 +110,7 @@ public final class Parsers {
      * @return a {@link Parser} for {@link Side#BUY}
      */
     static final Parser<Side> buy() {
-        return Scanners.isChar('B').map(new Map<_, Side>() {
-            @Override
-            public Side map(_ p0) {
-                return Side.BUY;
-            }
-        });
+        return Scanners.isChar('B').map(mapTo(Side.BUY));
     }
 
     /**
@@ -129,12 +119,7 @@ public final class Parsers {
      * @return a {@link Parser} for {@link Side#SELL}
      */
     static final Parser<Side> sell() {
-        return Scanners.isChar('S').map(new Map<_, Side>() {
-            @Override
-            public Side map(_ p0) {
-                return Side.SELL;
-            }
-        });
+        return Scanners.isChar('S').map(mapTo(Side.SELL));
     }
 
     /**
@@ -153,5 +138,41 @@ public final class Parsers {
      */
     static final Parser<_> comment() {
         return Scanners.WHITESPACES.next(Scanners.isChar('#')).next(Scanners.ANY_CHAR.many_());
+    }
+
+    /**
+     * Gets a {@link Map} that discards the value, and returns {@code t} instead.
+     *
+     * @param t   value to return.
+     * @param <T> type of the value to return.
+     *
+     * @return {@link Map} that returns {@code t}.
+     *
+     * @throws NullPointerException if {@code t} is null.
+     */
+    static final <T> Map<_, T> mapTo(@Nonnull final T t) {
+        checkNotNull(t, "t cannot be null.");
+        return new Map<_, T>() {
+            @Override
+            public T map(_ p0) {
+                return t;
+            }
+        };
+    }
+
+    /**
+     * Gets a {@link Map2} that returns the first argument.
+     *
+     * @param <T> type of the argument.
+     *
+     * @return {@link Map2} that returns the first argument.
+     */
+    static final <T> Map2<T, _, T> mapFirst() {
+        return new Map2<T, _, T>() {
+            @Override
+            public T map(T t, _ p1) {
+                return t;
+            }
+        };
     }
 }
