@@ -33,6 +33,13 @@ public interface OrderBook {
         long getId();
 
         /**
+         * Gets the timestamp.
+         *
+         * @return gets the timestamp.
+         */
+        long getTimestamp();
+
+        /**
          * Gets the side.
          *
          * @return the side.

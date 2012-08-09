@@ -8,6 +8,7 @@ package icebook.book;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.primitives.Longs;
 import icebook.book.OrderBook.Entry;
 import icebook.order.Side;
 
@@ -27,6 +28,8 @@ final class EntryImpl implements OrderBook.Entry {
 
     private final long id;
 
+    private final long timestamp;
+
     private final Side side;
 
     private final long price;
@@ -38,26 +41,32 @@ final class EntryImpl implements OrderBook.Entry {
     /**
      * Default constructor.
      *
-     * @param id     id of this {@link EntryImpl}.
-     * @param side   side of this {@link EntryImpl}.
-     * @param price  price of this {@link EntryImpl}.
-     * @param volume volume of this {@link EntryImpl}.
+     * @param id        id of this {@link EntryImpl}.
+     * @param timestamp timestamp of this {@link EntryImpl}.
+     * @param side      side of this {@link EntryImpl}.
+     * @param price     price of this {@link EntryImpl}.
+     * @param volume    volume of this {@link EntryImpl}.
      *
      * @throws NullPointerException     if {@code side} is null.
-     * @throws IllegalArgumentException if any {@code long} arguments is {@code <= 0}
+     * @throws IllegalArgumentException if any {@code long} argument is {@code <= 0}
      */
-    public EntryImpl(@Nonnegative final long id, @Nonnull final Side side, @Nonnegative final long price,
+    public EntryImpl(@Nonnegative final long id,
+                     @Nonnegative final long timestamp,
+                     @Nonnull final Side side,
+                     @Nonnegative final long price,
                      @Nonnegative final long volume) {
         checkArgument(id > 0, "id cannot be negative.");
+        checkArgument(timestamp > 0, "timestamp cannot be negative.");
         checkNotNull(side, "side cannot be null.");
-        checkArgument(price > 0);
-        checkArgument(volume > 0);
+        checkArgument(price > 0, "price cannot be negative.");
+        checkArgument(volume > 0, "volume cannot be negative.");
 
         this.id = id;
+        this.timestamp = timestamp;
         this.side = side;
         this.price = price;
         this.volume = volume;
-        this.hashCode = Objects.hashCode(id, side, price, volume);
+        this.hashCode = Objects.hashCode(id, timestamp, side, price, volume);
     }
 
     /**
@@ -66,6 +75,14 @@ final class EntryImpl implements OrderBook.Entry {
     @Override
     public long getId() {
         return id;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getTimestamp() {
+        return timestamp;
     }
 
     /**
@@ -95,10 +112,28 @@ final class EntryImpl implements OrderBook.Entry {
     /**
      * {@inheritDoc}
      *
-     * TODO: Implement the comparator.
+     * @throws NullPointerException     if {@code other} is null.
+     * @throws IllegalArgumentException if {@code other}'s {@link Side} is different.
      */
     @Override
-    public int compareTo(Entry o) {
+    public int compareTo(@Nonnull final Entry other) {
+
+        checkNotNull(other, "other cannot be null");
+        checkArgument(other.getSide().equals(this.side));
+
+        // Compare object references.
+        if (this == other) {
+            return 0;
+        }
+
+        if (Longs.compare(this.getPrice(), other.getPrice()) > 0) {
+            return this.getSide().isBuy() ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+        }
+
+        if (Longs.compare(this.getPrice(), other.getPrice()) < 0) {
+            return this.getSide().isBuy() ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+        }
+
         return 0;
     }
 
@@ -113,6 +148,7 @@ final class EntryImpl implements OrderBook.Entry {
         final EntryImpl entry = (EntryImpl) o;
 
         if (id != entry.id) return false;
+        if (timestamp != entry.timestamp) return false;
         if (price != entry.price) return false;
         if (volume != entry.volume) return false;
         if (side != entry.side) return false;
@@ -132,6 +168,7 @@ final class EntryImpl implements OrderBook.Entry {
     public String toString() {
         final ToStringHelper helper = Objects.toStringHelper(this);
         helper.add("id", id);
+        helper.add("timestamp", timestamp);
         helper.add("side", side);
         helper.add("price", price);
         helper.add("volume", volume);

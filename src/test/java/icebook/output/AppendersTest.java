@@ -47,13 +47,13 @@ public class AppendersTest {
     @Test
     public void testAppend() throws IOException {
         final List<Entry> buys = Lists.newArrayList();
-        buys.add(OrderBooks.newEntry(1234567890, Side.BUY, 32503, 1234567890));
-        buys.add(OrderBooks.newEntry(1138, Side.BUY, 31502, 7500));
+        buys.add(OrderBooks.newEntry(1234567890, 123, Side.BUY, 32503, 1234567890));
+        buys.add(OrderBooks.newEntry(1138, 123, Side.BUY, 31502, 7500));
 
         final List<Entry> sells = Lists.newArrayList();
-        sells.add(OrderBooks.newEntry(1234567891, Side.SELL, 32504, 1234567890));
-        sells.add(OrderBooks.newEntry(6808, Side.SELL, 32505, 7777));
-        sells.add(OrderBooks.newEntry(42100, Side.SELL, 32507, 3000));
+        sells.add(OrderBooks.newEntry(1234567891, 123, Side.SELL, 32504, 1234567890));
+        sells.add(OrderBooks.newEntry(6808, 123, Side.SELL, 32505, 7777));
+        sells.add(OrderBooks.newEntry(42100, 123, Side.SELL, 32507, 3000));
 
         final SortedSet<Entry> buyEntries = mock(SortedSet.class);
         when(buyEntries.iterator()).thenReturn(buys.iterator());

@@ -26,18 +26,21 @@ public final class OrderBooks {
     /**
      * Gets a default {@link Entry} implementation.
      *
-     * @param id     id of this {@link Entry}.
-     * @param side   side of this {@link Entry}.
-     * @param price  price of this {@link Entry}.
-     * @param volume volume of this {@link Entry}.
+     * @param id        id of this {@link Entry}.
+     * @param timestamp timestamp of this {@link Entry}.
+     * @param side      side of this {@link Entry}.
+     * @param price     price of this {@link Entry}.
+     * @param volume    volume of this {@link Entry}.
      *
      * @throws NullPointerException     if {@code side} is null.
-     * @throws IllegalArgumentException if any {@code long} arguments is {@code <= 0}
+     * @throws IllegalArgumentException if any {@code long} argument is {@code <= 0}
      */
-    public static final Entry newEntry(@Nonnegative final long id, @Nonnull final Side side,
+    public static final Entry newEntry(@Nonnegative final long id,
+                                       @Nonnegative final long timestamp,
+                                       @Nonnull final Side side,
                                        @Nonnegative final long price,
                                        @Nonnegative final long volume) {
-        return new EntryImpl(id, side, price, volume);
+        return new EntryImpl(id, timestamp, side, price, volume);
     }
 
 }
