@@ -83,14 +83,14 @@ public class EntryImplTest {
 
     @Test
     public void testCompareToPriceLess() {
-        assertThat(SELL.compareTo(OrderBooks.newEntry(1, TIMESTAMP, Side.SELL, PRICE - 1, 3)), lessThan(0));
-        assertThat(BUY.compareTo(OrderBooks.newEntry(1, TIMESTAMP, Side.BUY, PRICE - 1, 3)), greaterThan(0));
+        assertThat(SELL.compareTo(OrderBooks.newEntry(1, TIMESTAMP, Side.SELL, PRICE - 1, 3)), greaterThan(0));
+        assertThat(BUY.compareTo(OrderBooks.newEntry(1, TIMESTAMP, Side.BUY, PRICE - 1, 3)), lessThan(0));
     }
 
     @Test
     public void testCompareToPriceGreater() {
-        assertThat(SELL.compareTo(OrderBooks.newEntry(1, TIMESTAMP, Side.SELL, PRICE + 1, 3)), greaterThan(0));
-        assertThat(BUY.compareTo(OrderBooks.newEntry(1, TIMESTAMP, Side.BUY, PRICE + 1, 3)), lessThan(0));
+        assertThat(SELL.compareTo(OrderBooks.newEntry(1, TIMESTAMP, Side.SELL, PRICE + 1, 3)), lessThan(0));
+        assertThat(BUY.compareTo(OrderBooks.newEntry(1, TIMESTAMP, Side.BUY, PRICE + 1, 3)), greaterThan(0));
     }
 
     @Test

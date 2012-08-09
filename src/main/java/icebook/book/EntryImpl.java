@@ -123,11 +123,11 @@ final class EntryImpl implements OrderBook.Entry {
         }
 
         if (Longs.compare(this.getPrice(), other.getPrice()) > 0) {
-            return this.side.isBuy() ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+            return this.side.isBuy() ? Integer.MIN_VALUE : Integer.MAX_VALUE;
         }
 
         if (Longs.compare(this.getPrice(), other.getPrice()) < 0) {
-            return this.side.isBuy() ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+            return this.side.isBuy() ? Integer.MAX_VALUE : Integer.MIN_VALUE;
         }
 
         return Longs.compare(this.timestamp, other.getTimestamp());
