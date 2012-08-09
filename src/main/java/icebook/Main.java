@@ -8,8 +8,8 @@ package icebook;
 
 import com.google.common.io.CharStreams;
 import com.google.common.io.LineProcessor;
-import icebook.output.Appenders;
 import icebook.input.Parsers;
+import icebook.output.Appenders;
 
 import java.io.IOException;
 import java.util.SortedSet;
