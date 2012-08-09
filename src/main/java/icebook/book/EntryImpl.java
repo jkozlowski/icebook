@@ -6,6 +6,8 @@
 
 package icebook.book;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import icebook.book.OrderBook.Entry;
 import icebook.order.Side;
 
@@ -31,6 +33,8 @@ final class EntryImpl implements OrderBook.Entry {
 
     private final long volume;
 
+    private final int hashCode;
+
     /**
      * Default constructor.
      *
@@ -53,6 +57,7 @@ final class EntryImpl implements OrderBook.Entry {
         this.side = side;
         this.price = price;
         this.volume = volume;
+        this.hashCode = Objects.hashCode(id, side, price, volume);
     }
 
     /**
@@ -87,8 +92,49 @@ final class EntryImpl implements OrderBook.Entry {
         return volume;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * TODO: Implement the comparator.
+     */
     @Override
     public int compareTo(Entry o) {
         return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final EntryImpl entry = (EntryImpl) o;
+
+        if (id != entry.id) return false;
+        if (price != entry.price) return false;
+        if (volume != entry.volume) return false;
+        if (side != entry.side) return false;
+
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return hashCode;
+    }
+
+    @Override
+    public String toString() {
+        final ToStringHelper helper = Objects.toStringHelper(this);
+        helper.add("id", id);
+        helper.add("side", side);
+        helper.add("price", price);
+        helper.add("volume", volume);
+        return helper.toString();
     }
 }

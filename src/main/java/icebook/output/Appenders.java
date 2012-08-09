@@ -6,8 +6,7 @@
 
 package icebook.output;
 
-import icebook.order.LimitOrder;
-import icebook.order.Order;
+import icebook.book.OrderBook.Entry;
 import icebook.order.Side;
 
 import javax.annotation.Nonnull;
@@ -31,7 +30,7 @@ public final class Appenders {
     }
 
     /**
-     * Appends to {@code out} a formatted representation of {@code sellOrders} and {@code buyOrders},
+     * Appends to {@code out} a formatted representation of {@code sells} and {@code buys},
      * e.g. the following list of orders:
      *
      * <h2>BUY[Id, Volume, Price]</h2>
@@ -60,21 +59,21 @@ public final class Appenders {
      * +-----------------------------------------------------------------+
      * </pre>
      *
-     * @param out        {@link Appendable} to append to.
-     * @param sellOrders {@link Side#SELL} {@link Order}s to render.
-     * @param buyOrders  {@link Side#BUY} {@link Order}s to render.
+     * @param out   {@link Appendable} to append to.
+     * @param sells {@link Side#SELL} {@link Entry}ies to render.
+     * @param buys  {@link Side#BUY} {@link Entry}ies to render.
      *
      * @return a reference to {@code out}.
      *
      * @throws IOException If an I/O error occurs.
      */
     public static Appendable append(final @Nonnull Appendable out,
-                                    final @Nonnull SortedSet<Order> sellOrders,
-                                    final @Nonnull SortedSet<Order> buyOrders) throws IOException {
+                                    final @Nonnull SortedSet<Entry> sells,
+                                    final @Nonnull SortedSet<Entry> buys) throws IOException {
 
         checkNotNull(out);
-        checkNotNull(sellOrders);
-        checkNotNull(buyOrders);
+        checkNotNull(sells);
+        checkNotNull(buys);
 
         final Formatter format = new Formatter(out, Locale.ENGLISH);
 
@@ -84,24 +83,24 @@ public final class Appenders {
         format.format("| Id       | Volume      | Price | Price | Volume      | Id       |%n");
         format.format("+----------+-------------+-------+-------+-------------+----------+%n");
 
-        final Iterator<Order> buyOrdersIterator = buyOrders.iterator();
-        final Iterator<Order> sellOrdersIterator = sellOrders.iterator();
-        while (sellOrdersIterator.hasNext() || buyOrdersIterator.hasNext()) {
+        final Iterator<Entry> buysIterator = buys.iterator();
+        final Iterator<Entry> sellsIterator = sells.iterator();
+        while (sellsIterator.hasNext() || buysIterator.hasNext()) {
 
-            if (buyOrdersIterator.hasNext()) {
-                final LimitOrder buyOrder = (LimitOrder) buyOrdersIterator.next();
+            if (buysIterator.hasNext()) {
+                final Entry buyEntry = buysIterator.next();
                 // I used magic values, so that the append string is easier to read.
-                format.format("|%10d|%,13d|%,7d|", buyOrder.id, buyOrder.quantity, buyOrder.price);
+                format.format("|%10d|%,13d|%,7d|", buyEntry.getId(), buyEntry.getVolume(), buyEntry.getPrice());
             }
             else {
                 // Again, this is easier to read.
                 format.format("|          |             |       |");
             }
 
-            if (sellOrdersIterator.hasNext()) {
-                final LimitOrder sellOrder = (LimitOrder) sellOrdersIterator.next();
+            if (sellsIterator.hasNext()) {
+                final Entry sellEntry = sellsIterator.next();
                 // Likewise.
-                format.format("%,7d|%,13d|%10d|", sellOrder.price, sellOrder.quantity, sellOrder.id);
+                format.format("%,7d|%,13d|%10d|", sellEntry.getPrice(), sellEntry.getVolume(), sellEntry.getId());
             }
             else {
                 // Likewise.
