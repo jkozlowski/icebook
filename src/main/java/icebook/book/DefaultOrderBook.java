@@ -6,9 +6,14 @@
 
 package icebook.book;
 
+import com.google.common.collect.Sets;
+import com.sun.javafx.beans.annotations.NonNull;
+import icebook.order.Side;
+
 import javax.annotation.Nonnull;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.SortedSet;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -43,16 +48,38 @@ final class DefaultOrderBook implements OrderBook {
     }
 
     /**
-     * Gets the appropriate queue for this {@code entry}.
+     * {@inheritDoc}
+     */
+    @Override
+    public SortedSet<Entry> toSortedSet(@NonNull final Side side) {
+        return Sets.newTreeSet(getQueue(side));
+    }
+
+    /**
+     * Gets the queue for this {@code entry}.
      *
-     * @param entry {@link Entry} to get the appropriate queue.
+     * @param entry {@link Entry} to get the queue for.
      *
-     * @return appropriate queue.
+     * @return the queue for this {@link Entry}.
      *
      * @throws NullPointerException if {@code entry} is null.
      */
     private Queue<Entry> getQueue(@Nonnull final Entry entry) {
         checkNotNull(entry, "entry cannot be null.");
-        return entry.getSide().isBuy() ? buys : sells;
+        return getQueue(entry.getSide());
+    }
+
+    /**
+     * Gets the queue for this {@code side}.
+     *
+     * @param side {@link Side} to get the queue for.
+     *
+     * @return the queue for this {@code side}.
+     *
+     * @throws NullPointerException if {@code side} is null.
+     */
+    private Queue<Entry> getQueue(@Nonnull final Side side) {
+        checkNotNull(side, "side cannot be null.");
+        return side.isBuy() ? buys : sells;
     }
 }

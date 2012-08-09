@@ -6,10 +6,12 @@
 
 package icebook.book;
 
+import com.sun.javafx.beans.annotations.NonNull;
 import icebook.order.Side;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
+import java.util.SortedSet;
 
 /**
  * Maintains sorted sets of {@link Side#SELL} and {@link Side#BUY} {@link Entry}ies.
@@ -84,4 +86,15 @@ public interface OrderBook {
      * @throws NullPointerException if {@code order} is null.
      */
     Entry insert(final @Nonnull Entry entry);
+
+    /**
+     * Gets a sorted set of {@link Entry}ies for this {@code side}.
+     *
+     * @param side side to get.
+     *
+     * @return {@link SortedSet} of {@link Entry}ies for this {@code side}.
+     *
+     * @throws NullPointerException if {@code side} is null.
+     */
+    SortedSet<Entry> toSortedSet(@NonNull final Side side);
 }
