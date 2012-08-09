@@ -18,6 +18,7 @@ import org.codehaus.jparsec.functors.Map2;
 import org.codehaus.jparsec.misc.Mapper;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -41,14 +42,7 @@ public final class Parsers {
      * @return {@link Parser} for parsing {@link Order}s.
      */
     public static final Parser<Optional<Order>> newOrderParser() {
-        return org.codehaus.jparsec.Parsers.or(icebergOrder(), limitOrder(), ignore()).map(
-                new Map<Object, Optional<Order>>() {
-                    @Override
-                    @SuppressWarnings(value = "unchecked")
-                    public Optional<Order> map(Object o) {
-                        return Optional.fromNullable((Order) o);
-                    }
-                });
+        return org.codehaus.jparsec.Parsers.or(icebergOrder(), limitOrder(), ignore());
     }
 
     /**
@@ -56,9 +50,9 @@ public final class Parsers {
      *
      * @return a {@link Parser} for an iceberg order.
      */
-    static final Parser<Order> icebergOrder() {
-        return new Mapper<Order>() {
-            Order map(Side side, String s, String s1, String s2, String s3) {
+    static final Parser<Optional<Order>> icebergOrder() {
+        return new Mapper<Optional<Order>>() {
+            Optional<Order> map(Side side, String s, String s1, String s2, String s3) {
                 return Orders.newIcebergOrder(side, Integer.parseInt(s), Integer.parseInt(s1), Integer.parseInt(s2),
                                               Integer.parseInt(s3));
             }
@@ -76,9 +70,9 @@ public final class Parsers {
      *
      * @return a {@link Parser} for a limit order.
      */
-    static final Parser<Order> limitOrder() {
-        return new Mapper<Order>() {
-            Order map(Side side, String s, String s1, String s2) {
+    static final Parser<Optional<Order>> limitOrder() {
+        return new Mapper<Optional<Order>>() {
+            Optional<Order> map(Side side, String s, String s1, String s2) {
                 return Orders.newLimitOrder(side, Integer.parseInt(s), Integer.parseInt(s1), Integer.parseInt(s2));
             }
         }.sequence(
@@ -127,8 +121,14 @@ public final class Parsers {
      *
      * @return {@link Parser} that ignores {@link Scanners#WHITESPACES} and {@link Parsers#comment()}.
      */
-    static final Parser<_> ignore() {
-        return org.codehaus.jparsec.Parsers.or(comment(), Scanners.WHITESPACES.many_());
+    static final Parser<Optional<Order>> ignore() {
+        return org.codehaus.jparsec.Parsers.or(comment(), Scanners.WHITESPACES.many_()).map(
+                new Map<Object, Optional<Order>>() {
+                    @Override
+                    public Optional<Order> map(Object o) {
+                        return Optional.absent();
+                    }
+                });
     }
 
     /**
@@ -136,8 +136,14 @@ public final class Parsers {
      *
      * @return a {@link Parser} for comments.
      */
-    static final Parser<_> comment() {
-        return Scanners.WHITESPACES.next(Scanners.isChar('#')).next(Scanners.ANY_CHAR.many_());
+    static final Parser<Optional<Order>> comment() {
+        return Scanners.WHITESPACES.next(Scanners.isChar('#')).next(Scanners.ANY_CHAR.many().map(
+                new Map<List<_>, Optional<Order>>() {
+                    @Override
+                    public Optional<Order> map(List<_> list) {
+                        return Optional.absent();
+                    }
+                }));
     }
 
     /**

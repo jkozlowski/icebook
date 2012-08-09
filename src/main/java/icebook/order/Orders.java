@@ -6,6 +6,8 @@
 
 package icebook.order;
 
+import com.google.common.base.Optional;
+
 /**
  * Factory for {@link Order}s.
  *
@@ -25,8 +27,9 @@ public final class Orders {
      *
      * @return
      */
-    public static Order newIcebergOrder(final Side side, final long id, final long price, final long quantity, final long peakSize) {
-        return new IcebergOrder(side, id, price, quantity, peakSize);
+    public static Optional<Order> newIcebergOrder(final Side side, final long id, final long price, final long quantity,
+                                         final long peakSize) {
+        return Optional.<Order>of(new IcebergOrder(side, id, price, quantity, peakSize));
     }
 
     /**
@@ -34,7 +37,7 @@ public final class Orders {
      *
      * @return
      */
-    public static Order newLimitOrder(final Side side, final long id, final long price, final long quantity) {
-        return new LimitOrder(side, id, price, quantity);
+    public static Optional<Order> newLimitOrder(final Side side, final long id, final long price, final long quantity) {
+        return Optional.<Order>of(new LimitOrder(side, id, price, quantity));
     }
 }

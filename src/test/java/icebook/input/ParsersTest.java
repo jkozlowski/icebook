@@ -16,7 +16,6 @@ import org.testng.annotations.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
 
 /**
  * Tests {@link Parsers}
@@ -30,13 +29,13 @@ public class ParsersTest {
     public void testNewGrammar() {
         final Parser<Optional<Order>> grammar = Parsers.newOrderParser();
         assertThat(grammar.parse("B,100345,5103,100000,10000"),
-                   is(Optional.of(Orders.newIcebergOrder(Side.BUY, 100345, 5103, 100000, 10000))));
+                   is(Orders.newIcebergOrder(Side.BUY, 100345, 5103, 100000, 10000)));
         assertThat(grammar.parse("S,5103,100000,10000,100345"),
-                   is(Optional.of(Orders.newIcebergOrder(Side.SELL, 5103, 100000, 10000, 100345))));
+                   is(Orders.newIcebergOrder(Side.SELL, 5103, 100000, 10000, 100345)));
         assertThat(grammar.parse("B,100322,5103,7500"),
-                   is(Optional.of(Orders.newLimitOrder(Side.BUY, 100322, 5103, 7500))));
+                   is(Orders.newLimitOrder(Side.BUY, 100322, 5103, 7500)));
         assertThat(grammar.parse("S,5103,7500,100322"),
-                   is(Optional.of(Orders.newLimitOrder(Side.SELL, 5103, 7500, 100322))));
+                   is(Orders.newLimitOrder(Side.SELL, 5103, 7500, 100322)));
         assertThat(grammar.parse(" \n\t\r").isPresent(), is(Boolean.FALSE));
         assertThat(grammar.parse("  \n  # ").isPresent(), is(Boolean.FALSE));
         assertThat(grammar.parse("   # ").isPresent(), is(Boolean.FALSE));
@@ -45,7 +44,7 @@ public class ParsersTest {
 
     @Test
     public void testIcebergOrderParser() {
-        final Parser<Order> limitOrder = Parsers.icebergOrder();
+        final Parser<Optional<Order>> limitOrder = Parsers.icebergOrder();
         assertThat(limitOrder.parse("B,100345,5103,100000,10000"),
                    is(Orders.newIcebergOrder(Side.BUY, 100345, 5103, 100000, 10000)));
         assertThat(limitOrder.parse("S,5103,100000,10000,100345"),
@@ -54,7 +53,7 @@ public class ParsersTest {
 
     @Test
     public void testLimitOrderParser() {
-        final Parser<Order> limitOrder = Parsers.limitOrder();
+        final Parser<Optional<Order>> limitOrder = Parsers.limitOrder();
         assertThat(limitOrder.parse("B,100322,5103,7500"), is(Orders.newLimitOrder(Side.BUY, 100322, 5103, 7500)));
         assertThat(limitOrder.parse("S,5103,7500,100322"), is(Orders.newLimitOrder(Side.SELL, 5103, 7500, 100322)));
     }
@@ -85,10 +84,10 @@ public class ParsersTest {
 
     @Test
     public void testCommentParser() {
-        final Parser<?> comment = Parsers.comment();
-        assertThat(comment.parse("  \n  # "), nullValue());
-        assertThat(comment.parse("   # "), nullValue());
-        assertThat(comment.parse("   #asdasd"), nullValue());
+        final Parser<Optional<Order>> comment = Parsers.comment();
+        assertThat(comment.parse("  \n  # ").isPresent(), is(Boolean.FALSE));
+        assertThat(comment.parse("   # ").isPresent(), is(Boolean.FALSE));
+        assertThat(comment.parse("   #asdasd").isPresent(), is(Boolean.FALSE));
     }
 
     @Test(expectedExceptions = NullPointerException.class)
