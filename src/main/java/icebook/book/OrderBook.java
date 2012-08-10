@@ -7,7 +7,6 @@
 package icebook.book;
 
 import com.google.common.base.Optional;
-import com.sun.javafx.beans.annotations.NonNull;
 import icebook.order.Side;
 
 import javax.annotation.Nonnull;
@@ -119,5 +118,5 @@ public interface OrderBook {
      *
      * @throws NullPointerException if {@code side} is null.
      */
-    SortedSet<Entry> toSortedSet(@NonNull final Side side);
+    SortedSet<Entry> toSortedSet(@Nonnull final Side side);
 }

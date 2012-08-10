@@ -8,7 +8,6 @@ package icebook.book;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
-import com.sun.javafx.beans.annotations.NonNull;
 import icebook.order.Side;
 
 import javax.annotation.Nonnull;
@@ -70,7 +69,7 @@ final class DefaultOrderBook implements OrderBook {
      * {@inheritDoc}
      */
     @Override
-    public SortedSet<Entry> toSortedSet(@NonNull final Side side) {
+    public SortedSet<Entry> toSortedSet(@Nonnull final Side side) {
         return Sets.newTreeSet(getQueue(side));
     }
 

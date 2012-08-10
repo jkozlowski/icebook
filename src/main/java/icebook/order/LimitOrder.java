@@ -8,6 +8,12 @@ package icebook.order;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.Optional;
+import icebook.book.OrderBook.Entry;
+import icebook.exec.Matcher;
+import icebook.exec.Trade;
+
+import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -32,6 +38,28 @@ public final class LimitOrder implements Order {
         this.id = id;
         this.price = price;
         this.quantity = quantity;
+    }
+
+    @Override
+    public long getId() {
+        return id;
+    }
+
+    @Override
+    public Side getSide() {
+        return side;
+    }
+
+    @Override
+    public Entry getEntry() {
+        throw new IllegalStateException("This is not implemented yet.");
+    }
+
+    @Override
+    public Optional<Trade> match(@Nonnull final Matcher matcher, final @Nonnull Entry entry) {
+        checkNotNull(matcher);
+        checkNotNull(entry);
+        return matcher.match(this, entry);
     }
 
     @Override
