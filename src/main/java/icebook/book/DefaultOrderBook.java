@@ -6,6 +6,7 @@
 
 package icebook.book;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
 import com.sun.javafx.beans.annotations.NonNull;
 import icebook.order.Side;
@@ -45,6 +46,15 @@ final class DefaultOrderBook implements OrderBook {
         checkNotNull(entry);
         getQueue(entry).add(entry);
         return entry;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<Entry> peek(@Nonnull final Side side) {
+        checkNotNull(side);
+        return Optional.fromNullable(getQueue(side).peek());
     }
 
     /**

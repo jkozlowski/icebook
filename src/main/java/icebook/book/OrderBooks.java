@@ -43,4 +43,12 @@ public final class OrderBooks {
         return new EntryImpl(id, timestamp, side, price, volume);
     }
 
+    /**
+     * Gets a default {@link OrderBook} implementation.
+     *
+     * @return new {@link OrderBook}.
+     */
+    public static final OrderBook newDefaultOrderBook() {
+        return new DefaultOrderBook();
+    }
 }

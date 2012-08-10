@@ -6,6 +6,7 @@
 
 package icebook.book;
 
+import com.google.common.base.Optional;
 import com.sun.javafx.beans.annotations.NonNull;
 import icebook.order.Side;
 
@@ -86,6 +87,17 @@ public interface OrderBook {
      * @throws NullPointerException if {@code order} is null.
      */
     Entry insert(final @Nonnull Entry entry);
+
+    /**
+     * Gets the first {@link Entry} on this {@code side}.
+     *
+     * @param side side of {@link Entry} to get.
+     *
+     * @return first {@link Entry} on this {@code side}.
+     *
+     * @throws NullPointerException if {@code side} is null.
+     */
+    Optional<Entry> peek(@Nonnull final Side side);
 
     /**
      * Gets a sorted set of {@link Entry}ies for this {@code side}.
