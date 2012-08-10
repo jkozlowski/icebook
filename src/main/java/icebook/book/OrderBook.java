@@ -100,6 +100,17 @@ public interface OrderBook {
     Optional<Entry> peek(@Nonnull final Side side);
 
     /**
+     * Checks if the book is empty on this {@code side}.
+     *
+     * @param side the side of the book to check.
+     *
+     * @return {@code true} is this {@code side} of the book is empty, {@code false} otherwise.
+     *
+     * @throws NullPointerException if {@code side} is null.
+     */
+    boolean isEmpty(@Nonnull final Side side);
+
+    /**
      * Gets a sorted set of {@link Entry}ies for this {@code side}.
      *
      * @param side side to get.

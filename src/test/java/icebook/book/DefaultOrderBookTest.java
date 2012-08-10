@@ -41,7 +41,7 @@ public class DefaultOrderBookTest {
         final Entry entry2 = OrderBooks.newEntry(2, 124, Side.SELL, 124, 123);
         book.insert(entry1);
         book.insert(entry2);
-        assertThat(book.toSortedSet(Side.SELL).toArray(new Entry[]{}), is(new Entry[] {entry1, entry2}));
+        assertThat(book.toSortedSet(Side.SELL).toArray(new Entry[]{}), is(new Entry[]{entry1, entry2}));
     }
 
     @Test
@@ -51,7 +51,7 @@ public class DefaultOrderBookTest {
         final Entry entry2 = OrderBooks.newEntry(2, 124, Side.BUY, 124, 123);
         book.insert(entry1);
         book.insert(entry2);
-        assertThat(book.toSortedSet(Side.BUY).toArray(new Entry[]{}), is(new Entry[] {entry2, entry1}));
+        assertThat(book.toSortedSet(Side.BUY).toArray(new Entry[]{}), is(new Entry[]{entry2, entry1}));
     }
 
     @Test
@@ -77,5 +77,18 @@ public class DefaultOrderBookTest {
 
         assertThat(book.peek(Side.BUY), is(Optional.of(buy2)));
         assertThat(book.peek(Side.SELL), is(Optional.of(sell1)));
+    }
+
+    @Test
+    public void testIsEmpty() {
+        final OrderBook book = OrderBooks.newDefaultOrderBook();
+        assertThat(book.isEmpty(Side.BUY), is(true));
+        assertThat(book.isEmpty(Side.SELL), is(true));
+
+        book.insert(OrderBooks.newEntry(1, 123, Side.BUY, 123, 123));
+        assertThat(book.isEmpty(Side.BUY), is(false));
+
+        book.insert(OrderBooks.newEntry(1, 123, Side.SELL, 123, 123));
+        assertThat(book.isEmpty(Side.SELL), is(false));
     }
 }

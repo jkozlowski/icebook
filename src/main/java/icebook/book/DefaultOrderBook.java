@@ -61,6 +61,15 @@ final class DefaultOrderBook implements OrderBook {
      * {@inheritDoc}
      */
     @Override
+    public boolean isEmpty(@Nonnull Side side) {
+        checkNotNull(side);
+        return getQueue(side).isEmpty();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public SortedSet<Entry> toSortedSet(@NonNull final Side side) {
         return Sets.newTreeSet(getQueue(side));
     }
