@@ -9,10 +9,12 @@ package icebook.output;
 import com.google.common.collect.Lists;
 import icebook.book.OrderBook.Entry;
 import icebook.book.OrderBooks;
+import icebook.exec.Trade;
 import icebook.order.Side;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.SortedSet;
 
@@ -30,22 +32,22 @@ import static org.mockito.Mockito.when;
 public class AppendersTest {
 
     @Test(expectedExceptions = NullPointerException.class)
-    public void testAppendNullOut() throws IOException {
+    public void testAppendEntriesNullOut() throws IOException {
         Appenders.append(null, mock(SortedSet.class), mock(SortedSet.class));
     }
 
     @Test(expectedExceptions = NullPointerException.class)
-    public void testAppendNullSellOrders() throws IOException {
+    public void testAppendEntriesNullSellOrders() throws IOException {
         Appenders.append(mock(Appendable.class), null, mock(SortedSet.class));
     }
 
     @Test(expectedExceptions = NullPointerException.class)
-    public void testAppendNullBuyOrders() throws IOException {
+    public void testAppendEntriesNullBuyOrders() throws IOException {
         Appenders.append(mock(Appendable.class), mock(SortedSet.class), null);
     }
 
     @Test
-    public void testAppend() throws IOException {
+    public void testAppendEntries() throws IOException {
         final List<Entry> buys = Lists.newArrayList();
         buys.add(OrderBooks.newEntry(1234567890, 123, Side.BUY, 32503, 1234567890));
         buys.add(OrderBooks.newEntry(1138, 123, Side.BUY, 31502, 7500));
@@ -71,5 +73,36 @@ public class AppendersTest {
                 + "|          |             |       | 32,507|        3,000|     42100|\n"
                 + "+-----------------------------------------------------------------+\n";
         assertThat(Appenders.append(new StringBuilder(), sellEntries, buyEntries).toString(), is(expected));
+    }
+
+    @Test(expectedExceptions = NullPointerException.class)
+    public void testAppendTradesNullOut() {
+        Appenders.append(null, Collections.EMPTY_LIST);
+    }
+
+    @Test(expectedExceptions = NullPointerException.class)
+    public void testAppendTradesNullTrades() {
+        Appenders.append(mock(Appendable.class), null);
+    }
+
+    @Test
+    public void testAppendEmptyTrades() {
+        assertThat(Appenders.append(new StringBuilder(), Collections.EMPTY_LIST).toString().isEmpty(), is(true));
+    }
+
+    @Test
+    public void testAppendTrades() {
+
+        final List<Trade> trades = Lists.newArrayList();
+        trades.add(new Trade(100322, 100345, 5103, 7500));
+        trades.add(new Trade(100323, 100346, 5102, 2400));
+        trades.add(new Trade(100324, 100347, 5103, 500));
+
+        final String expected
+                = "100322,100345,5103,7500\n"
+                + "100323,100346,5102,2400\n"
+                + "100324,100347,5103,500\n";
+
+        assertThat(Appenders.append(new StringBuilder(), trades).toString(), is(expected));
     }
 }

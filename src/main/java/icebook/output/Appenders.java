@@ -7,10 +7,11 @@
 package icebook.output;
 
 import icebook.book.OrderBook.Entry;
+import icebook.exec.Trade;
 import icebook.order.Side;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
+import java.util.Collection;
 import java.util.Formatter;
 import java.util.Iterator;
 import java.util.Locale;
@@ -59,17 +60,19 @@ public final class Appenders {
      * +-----------------------------------------------------------------+
      * </pre>
      *
+     * <p>If both {@code sells} and {@code buys} are empty, this method will append an empty table to {@code out}.</p>
+     *
      * @param out   {@link Appendable} to append to.
      * @param sells {@link Side#SELL} {@link Entry}ies to render.
      * @param buys  {@link Side#BUY} {@link Entry}ies to render.
      *
      * @return a reference to {@code out}.
      *
-     * @throws IOException If an I/O error occurs.
+     * @throws NullPointerException if any argument is null.
      */
-    public static Appendable append(final @Nonnull Appendable out,
-                                    final @Nonnull SortedSet<Entry> sells,
-                                    final @Nonnull SortedSet<Entry> buys) throws IOException {
+    public static Appendable append(@Nonnull final Appendable out,
+                                    @Nonnull final SortedSet<Entry> sells,
+                                    @Nonnull final SortedSet<Entry> buys) {
 
         checkNotNull(out, "out cannot be null.");
         checkNotNull(sells, "sells cannot be null.");
@@ -110,7 +113,61 @@ public final class Appenders {
             format.format("%n");
         }
 
-        out.append("+-----------------------------------------------------------------+\n");
+        format.format("+-----------------------------------------------------------------+%n");
+        format.flush();
+
+        return out;
+    }
+
+    /**
+     * Appends to {@code out} a formatted representation of {@code trades}, where the trade message will be contained
+     * ona single line with nothing else present on the same line, and be in comma separated format with the following
+     * fields:
+     *
+     * <table>
+     * <tr>
+     * <th>Field Index</th>
+     * <th>Description</th>
+     * </tr>
+     * <tr>
+     * <td>0</td>
+     * <td>buy order id matched</td>
+     * </tr>
+     * <tr>
+     * <td>1</td>
+     * <td>sell order id matched</td>
+     * </tr>
+     * <tr>
+     * <td>2</td>
+     * <td>price in pence</td>
+     * </tr>
+     * <tr>
+     * <td>3</td>
+     * <td>quantity</td>
+     * </tr>
+     * </table>
+     *
+     * e.g. <pre>100322,100345,5103,7500</pre>
+     *
+     * <p>If {@code trades} is empty, this method will not append anything to {@code out}, but may flush it.</p>
+     *
+     * @param out    {@link Appendable} to append to.
+     * @param trades {@link Trade}s to render.
+     *
+     * @return a reference to {@code out}.
+     *
+     * @throws NullPointerException if any argument is null.
+     */
+    public static Appendable append(@Nonnull final Appendable out, @Nonnull final Collection<Trade> trades) {
+
+        checkNotNull(out);
+        checkNotNull(trades);
+
+        final Formatter format = new Formatter(out, Locale.ENGLISH);
+
+        for (final Trade t : trades) {
+            format.format("%d,%d,%d,%d%n", t.getBuyOrderId(), t.getSellOrderId(), t.getPrice(), t.getQuantity());
+        }
 
         return out;
     }
