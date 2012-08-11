@@ -92,6 +92,15 @@ public class ParsersTest {
         assertThat(comment.parse("#").isPresent(), is(Boolean.FALSE));
     }
 
+    @Test
+    public void testIgnore() {
+        final Parser<Optional<Order>> comment = Parsers.ignore();
+        assertThat(comment.parse("  \n").isPresent(), is(Boolean.FALSE));
+        assertThat(comment.parse("   ").isPresent(), is(Boolean.FALSE));
+        assertThat(comment.parse(" ").isPresent(), is(Boolean.FALSE));
+        assertThat(comment.parse("\t\n\r ").isPresent(), is(Boolean.FALSE));
+    }
+
     @Test(expectedExceptions = NullPointerException.class)
     public void testMapToNullT() {
         Parsers.mapTo(null);
