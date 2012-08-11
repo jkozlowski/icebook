@@ -62,7 +62,7 @@ public final class Main {
                         Appenders.append(System.out, book.toSortedSet(Side.SELL), book.toSortedSet(Side.BUY));
                     }
                     else {
-                        System.err.format("Could not parse line: '%s'%n", line);
+                        System.err.format("Could not parse line: '%s'%n", line).flush();
                     }
 
                     return true;

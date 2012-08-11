@@ -72,7 +72,6 @@ public final class ExecutionEngine {
 
         final Collection<Trade> trades = Lists.newLinkedList();
 
-
         while (!order.isFilled() && !book.isEmpty(order.getSide().getOpposite())) {
             final Entry entry = book.peek(order.getSide().getOpposite()).get();
 
