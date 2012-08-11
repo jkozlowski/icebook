@@ -47,7 +47,7 @@ public class AppendersTest {
     }
 
     @Test
-    public void testAppendEntries() throws IOException {
+    public void testAppendEntriesMoreSells() throws IOException {
         final List<Entry> buys = Lists.newArrayList();
         buys.add(OrderBooks.newEntry(1234567890, 123, Side.BUY, 32503, 1234567890));
         buys.add(OrderBooks.newEntry(1138, 123, Side.BUY, 31502, 7500));
@@ -71,6 +71,32 @@ public class AppendersTest {
                 + "|1234567890|1,234,567,890| 32,503| 32,504|1,234,567,890|1234567891|\n"
                 + "|      1138|        7,500| 31,502| 32,505|        7,777|      6808|\n"
                 + "|          |             |       | 32,507|        3,000|     42100|\n"
+                + "+-----------------------------------------------------------------+\n";
+        assertThat(Appenders.append(new StringBuilder(), sellEntries, buyEntries).toString(), is(expected));
+    }
+
+    @Test
+    public void testAppendEntriesMoreBuys() throws IOException {
+        final List<Entry> buys = Lists.newArrayList();
+        buys.add(OrderBooks.newEntry(1234567890, 123, Side.BUY, 32503, 1234567890));
+        buys.add(OrderBooks.newEntry(1138, 123, Side.BUY, 31502, 7500));
+
+        final List<Entry> sells = Lists.newArrayList();
+        sells.add(OrderBooks.newEntry(1234567891, 123, Side.SELL, 32504, 1234567890));
+
+        final SortedSet<Entry> buyEntries = mock(SortedSet.class);
+        when(buyEntries.iterator()).thenReturn(buys.iterator());
+
+        final SortedSet<Entry> sellEntries = mock(SortedSet.class);
+        when(sellEntries.iterator()).thenReturn(sells.iterator());
+
+        final String expected
+                = "+-----------------------------------------------------------------+\n"
+                + "| BUY                            | SELL                           |\n"
+                + "| Id       | Volume      | Price | Price | Volume      | Id       |\n"
+                + "+----------+-------------+-------+-------+-------------+----------+\n"
+                + "|1234567890|1,234,567,890| 32,503| 32,504|1,234,567,890|1234567891|\n"
+                + "|      1138|        7,500| 31,502|       |             |          |\n"
                 + "+-----------------------------------------------------------------+\n";
         assertThat(Appenders.append(new StringBuilder(), sellEntries, buyEntries).toString(), is(expected));
     }

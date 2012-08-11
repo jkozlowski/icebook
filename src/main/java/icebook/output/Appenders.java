@@ -107,7 +107,7 @@ public final class Appenders {
             }
             else {
                 // Likewise.
-                format.format("          |             |       |");
+                format.format("       |             |          |");
             }
 
             format.format("%n");
