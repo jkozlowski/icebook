@@ -8,13 +8,12 @@ package icebook.order;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.base.Optional;
 import icebook.book.OrderBook.Entry;
-import icebook.exec.Matcher;
 import icebook.exec.Trade;
 
 import javax.annotation.Nonnull;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -31,15 +30,15 @@ public final class IcebergOrder implements Order {
 
     private final long price;
 
-    private final long quantity;
+    private long volume;
 
     private final long peakSize;
 
-    public IcebergOrder(final Side side, final long id, final long price, final long quantity, final long peakSize) {
+    public IcebergOrder(final Side side, final long id, final long price, final long volume, final long peakSize) {
         this.side = checkNotNull(side);
         this.id = id;
         this.price = price;
-        this.quantity = quantity;
+        this.volume = volume;
         this.peakSize = peakSize;
     }
 
@@ -48,21 +47,57 @@ public final class IcebergOrder implements Order {
         return id;
     }
 
+    /**
+     * Gets the price.
+     *
+     * @return the price.
+     */
+    @Override
+    public long getPrice() {
+        return price;
+    }
+
+    /**
+     * Gets the volume.
+     *
+     * @return the volume.
+     */
+    @Override
+    public long getVolume() {
+        return volume;
+    }
+
     @Override
     public Side getSide() {
         return side;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Entry getEntry() {
-        throw new IllegalStateException("This is not implemented yet.");
+    public boolean isFilled() {
+        return volume > 0;
     }
 
     @Override
-    public Optional<Trade> match(@Nonnull final Matcher matcher, final @Nonnull Entry entry) {
-        checkNotNull(matcher);
-        checkNotNull(entry);
-        return matcher.match(this, entry);
+    public void execute(@Nonnull final Trade trade) {
+        checkNotNull(trade);
+        if (side.isBuy()) {
+            checkArgument(trade.getBuyOrderId() == id);
+        }
+        else {
+            checkArgument(trade.getSellOrderId() == id);
+        }
+
+        checkArgument(volume >= trade.getQuantity());
+
+        volume -= trade.getQuantity();
+    }
+
+    @Override
+    public Entry getEntry() {
+        throw new IllegalStateException("This is not implemented yet.");
     }
 
     @Override
@@ -75,7 +110,7 @@ public final class IcebergOrder implements Order {
         if (id != that.id) return false;
         if (peakSize != that.peakSize) return false;
         if (price != that.price) return false;
-        if (quantity != that.quantity) return false;
+        if (volume != that.volume) return false;
         if (side != that.side) return false;
 
         return true;
@@ -86,7 +121,7 @@ public final class IcebergOrder implements Order {
         int result = side.hashCode();
         result = 31 * result + (int) (id ^ (id >>> 32));
         result = 31 * result + (int) (price ^ (price >>> 32));
-        result = 31 * result + (int) (quantity ^ (quantity >>> 32));
+        result = 31 * result + (int) (volume ^ (volume >>> 32));
         result = 31 * result + (int) (peakSize ^ (peakSize >>> 32));
         return result;
     }
@@ -97,7 +132,7 @@ public final class IcebergOrder implements Order {
         toString.add("side", side);
         toString.add("id", id);
         toString.add("price", price);
-        toString.add("quantity", quantity);
+        toString.add("volume", volume);
         toString.add("peakSize", peakSize);
         return toString.toString();
     }

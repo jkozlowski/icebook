@@ -6,9 +6,7 @@
 
 package icebook.order;
 
-import com.google.common.base.Optional;
 import icebook.book.OrderBook.Entry;
-import icebook.exec.Matcher;
 import icebook.exec.Trade;
 
 import javax.annotation.Nonnull;
@@ -36,6 +34,37 @@ public interface Order {
     Side getSide();
 
     /**
+     * Gets the price.
+     *
+     * @return the price.
+     */
+    long getPrice();
+
+    /**
+     * Gets the remaining volume.
+     *
+     * @return the remaining volume.
+     */
+    long getVolume();
+
+    /**
+     * Checks if this {@link Order} is filled.
+     *
+     * @return {@code true} if this {@link Order} is filled, {@code false} otherwise.
+     */
+    boolean isFilled();
+
+    /**
+     * Executes this {@link Order}.
+     *
+     * @param trade details of the trade.
+     *
+     * @throws NullPointerException     if {@code trade} is null.
+     * @throws IllegalArgumentException if {@code trade} does not refer to this {@link Order}.
+     */
+    void execute(@Nonnull final Trade trade);
+
+    /**
      * Gets an {@link Entry} for the remaining volume of this {@link Order}.
      *
      * @return {@link Entry} for the remaining volume of this {@link Order}.
@@ -43,17 +72,4 @@ public interface Order {
      * @throws IllegalStateException if this {@link Order} is filled.
      */
     Entry getEntry();
-
-    /**
-     * Accepts a {@link Matcher}.
-     *
-     * @param matcher {@link Matcher} to accept.
-     * @param entry   {@link Entry} to match against.
-     *
-     * @return result of matching.
-     *
-     * @throws NullPointerException     if any argument is null.
-     * @throws IllegalArgumentException if {@code order} and {@code entry} have the same {@link Side}.
-     */
-    Optional<Trade> match(@Nonnull final Matcher matcher, @Nonnull final Entry entry);
 }

@@ -60,6 +60,15 @@ final class DefaultOrderBook implements OrderBook {
      * {@inheritDoc}
      */
     @Override
+    public Entry remove(@Nonnull final Side side) {
+        checkNotNull(side, "side cannot be null.");
+        return getQueue(side).remove();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean isEmpty(@Nonnull final Side side) {
         checkNotNull(side, "side cannot be null.");
         return getQueue(side).isEmpty();

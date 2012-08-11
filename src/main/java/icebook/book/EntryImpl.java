@@ -10,6 +10,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.primitives.Longs;
 import icebook.book.OrderBook.Entry;
+import icebook.exec.Trade;
 import icebook.order.Side;
 
 import javax.annotation.Nonnegative;
@@ -34,7 +35,7 @@ final class EntryImpl implements OrderBook.Entry {
 
     private final long price;
 
-    private final long volume;
+    private long volume;
 
     private final int hashCode;
 
@@ -107,6 +108,29 @@ final class EntryImpl implements OrderBook.Entry {
     @Override
     public long getVolume() {
         return volume;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isFilled() {
+        return volume > 0;
+    }
+
+    @Override
+    public void execute(@Nonnull final Trade trade) {
+        checkNotNull(trade);
+        if (side.isBuy()) {
+            checkArgument(trade.getBuyOrderId() == id);
+        }
+        else {
+            checkArgument(trade.getSellOrderId() == id);
+        }
+
+        checkArgument(volume >= trade.getQuantity());
+
+        volume -= trade.getQuantity();
     }
 
     /**

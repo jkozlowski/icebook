@@ -7,10 +7,10 @@
 package icebook.book;
 
 import com.google.common.base.Optional;
+import icebook.exec.Trade;
 import icebook.order.Side;
 
 import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
 import java.util.SortedSet;
 
 /**
@@ -24,7 +24,6 @@ public interface OrderBook {
     /**
      * Single entry in the {@link OrderBook}.
      */
-    @Immutable
     public interface Entry extends Comparable<Entry> {
 
         /**
@@ -63,6 +62,23 @@ public interface OrderBook {
         long getVolume();
 
         /**
+         * Checks if this {@link Entry} is filled.
+         *
+         * @return {@code true} if this {@link Entry} is filled, {@code false} otherwise.
+         */
+        boolean isFilled();
+
+        /**
+         * Executes this {@link Entry}.
+         *
+         * @param trade details of the trade.
+         *
+         * @throws NullPointerException     if {@code trade} is null.
+         * @throws IllegalArgumentException if {@code trade} does not refer to this {@link Entry}.
+         */
+        void execute(@Nonnull final Trade trade);
+
+        /**
          * <em>Note: this class has a natural ordering that is inconsistent with equals.</em> More specifically,
          * if {@link #compareTo(Entry)}  returns 0, the two {@link Entry}ies prices and timestamps are equal; it does
          * not however indicate that their remaining properties are also equal by the contract of {@link
@@ -97,6 +113,18 @@ public interface OrderBook {
      * @throws NullPointerException if {@code side} is null.
      */
     Optional<Entry> peek(@Nonnull final Side side);
+
+    /**
+     * Removes the first {@link Entry} on this {@code side}.
+     *
+     * @param side side of {@link Entry} to remove.
+     *
+     * @return removed {@link Entry}.
+     *
+     * @throws NullPointerException  if {@code side} is null.
+     * @throws IllegalStateException if this {@code side} is empty.
+     */
+    Entry remove(@Nonnull final Side side);
 
     /**
      * Checks if the book is empty on this {@code side}.
