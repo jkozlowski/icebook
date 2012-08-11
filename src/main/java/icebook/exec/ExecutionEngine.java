@@ -41,9 +41,9 @@ public final class ExecutionEngine implements Matcher {
      * @throws IllegalArgumentException if {@code book} is not empty.
      */
     public ExecutionEngine(@Nonnull final OrderBook book) {
-        checkNotNull(book);
-        checkArgument(book.isEmpty(Side.SELL));
-        checkArgument(book.isEmpty(Side.BUY));
+        checkNotNull(book, "book cannot be null.");
+        checkArgument(book.isEmpty(Side.SELL), "book must be empty.");
+        checkArgument(book.isEmpty(Side.BUY), "book must be empty.");
         this.book = book;
     }
 
@@ -59,7 +59,7 @@ public final class ExecutionEngine implements Matcher {
      * @throws IllegalStateException if {@code order} is filled.
      */
     public Collection<Trade> insert(@Nonnull final Order order) {
-        checkNotNull(order);
+        checkNotNull(order, "order cannot be null.");
 
         while (book.peek(order.getSide().getOpposite()).isPresent()) {
             final Optional<Trade> trade = order.match(this, book.peek(order.getSide().getOpposite()).get());

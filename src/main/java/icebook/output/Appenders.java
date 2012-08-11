@@ -71,9 +71,9 @@ public final class Appenders {
                                     final @Nonnull SortedSet<Entry> sells,
                                     final @Nonnull SortedSet<Entry> buys) throws IOException {
 
-        checkNotNull(out);
-        checkNotNull(sells);
-        checkNotNull(buys);
+        checkNotNull(out, "out cannot be null.");
+        checkNotNull(sells, "sells cannot be null.");
+        checkNotNull(buys, "buys cannot be null.");
 
         final Formatter format = new Formatter(out, Locale.ENGLISH);
 

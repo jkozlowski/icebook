@@ -42,7 +42,7 @@ final class DefaultOrderBook implements OrderBook {
      */
     @Override
     public Entry insert(@Nonnull final Entry entry) {
-        checkNotNull(entry);
+        checkNotNull(entry, "entry cannot be null.");
         getQueue(entry).add(entry);
         return entry;
     }
@@ -52,7 +52,7 @@ final class DefaultOrderBook implements OrderBook {
      */
     @Override
     public Optional<Entry> peek(@Nonnull final Side side) {
-        checkNotNull(side);
+        checkNotNull(side, "side cannot be null.");
         return Optional.fromNullable(getQueue(side).peek());
     }
 
@@ -60,8 +60,8 @@ final class DefaultOrderBook implements OrderBook {
      * {@inheritDoc}
      */
     @Override
-    public boolean isEmpty(@Nonnull Side side) {
-        checkNotNull(side);
+    public boolean isEmpty(@Nonnull final Side side) {
+        checkNotNull(side, "side cannot be null.");
         return getQueue(side).isEmpty();
     }
 

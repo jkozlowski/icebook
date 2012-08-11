@@ -42,7 +42,7 @@ public final class Trade {
                  @Nonnegative final long sellOrderId,
                  @Nonnegative final long price,
                  @Nonnegative final long quantity) {
-        checkArgument(Longs.min(buyOrderId, sellOrderId, price, quantity) > 0);
+        checkArgument(Longs.min(buyOrderId, sellOrderId, price, quantity) > 0, "all arguments have to be positive.");
         this.buyOrderId = buyOrderId;
         this.sellOrderId = sellOrderId;
         this.price = price;
