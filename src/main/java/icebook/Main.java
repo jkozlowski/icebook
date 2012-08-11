@@ -15,7 +15,7 @@ import java.util.SortedSet;
 
 /**
  * Main entry point to the icebook simulator. The simulator will read the input from {@link System#in} and parse it
- * according to the grammar as defined by {@link Parsers#newOrderParser()}. Every successfully parsed order will be
+ * according to the grammar defined by {@link Parsers#newOrderParser()}. Every successfully parsed order will be
  * applied to the order book and any trade messages will be printed to {@link System#out},
  * followed by the current state of the book as defined by {@link Appenders#append(Appendable, SortedSet,
  * SortedSet)}. Any error messages will be forwarded to {@link System#err}.

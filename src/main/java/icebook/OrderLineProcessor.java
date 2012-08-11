@@ -28,10 +28,11 @@ import java.util.SortedSet;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * {@link LineProcessor} implementation that parses {@link Order}s from input according to the grammar as defined by
+ * {@link LineProcessor} implementation that parses {@link Order}s from input according to the grammar defined by
  * {@link Parsers#newOrderParser()}. Every successfully parsed order will be applied to the order book and any trade
- * messages will be printed to {@code out}, followed by the current state of the book as defined by {@link
- * Appenders#append(Appendable, SortedSet, SortedSet)}. Any error messages will be forwarded to {@code err}.
+ * messages will be printed to {@code out} in the format defined by {@link Appenders#append(Appendable, Collection)},
+ * followed by the current state of the book in the format defined by {@link Appenders#append(Appendable, SortedSet,
+ * SortedSet)}. Any error messages are printed to to {@code err}.
  *
  * @author Jakub D Kozlowski
  * @since 1.0
