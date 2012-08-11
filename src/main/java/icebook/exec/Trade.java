@@ -6,6 +6,8 @@
 
 package icebook.exec;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.primitives.Longs;
 
 import javax.annotation.Nonnegative;
@@ -83,5 +85,39 @@ public final class Trade {
      */
     public long getQuantity() {
         return quantity;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Trade trade = (Trade) o;
+
+        if (buyOrderId != trade.buyOrderId) return false;
+        if (price != trade.price) return false;
+        if (quantity != trade.quantity) return false;
+        if (sellOrderId != trade.sellOrderId) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (buyOrderId ^ (buyOrderId >>> 32));
+        result = 31 * result + (int) (sellOrderId ^ (sellOrderId >>> 32));
+        result = 31 * result + (int) (price ^ (price >>> 32));
+        result = 31 * result + (int) (quantity ^ (quantity >>> 32));
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        final ToStringHelper helper = Objects.toStringHelper(this);
+        helper.add("buyOrderId", buyOrderId);
+        helper.add("sellOrderId", sellOrderId);
+        helper.add("price", price);
+        helper.add("quantity", quantity);
+        return helper.toString();
     }
 }
