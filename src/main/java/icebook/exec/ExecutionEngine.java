@@ -65,7 +65,7 @@ public final class ExecutionEngine {
      */
     public Collection<Trade> insert(@Nonnull final Order order) {
         checkNotNull(order, "order cannot be null.");
-        checkArgument(order.isFilled());
+        checkArgument(!order.isFilled());
 
         final Collection<Trade> trades = Lists.newLinkedList();
 

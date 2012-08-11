@@ -115,7 +115,7 @@ final class EntryImpl implements OrderBook.Entry {
      */
     @Override
     public boolean isFilled() {
-        return volume > 0;
+        return 0 == volume;
     }
 
     @Override

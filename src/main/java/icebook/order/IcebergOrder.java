@@ -8,13 +8,16 @@ package icebook.order;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.primitives.Longs;
 import icebook.book.OrderBook.Entry;
+import icebook.book.OrderBooks;
 import icebook.exec.Trade;
 
 import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 /**
  * Defines an iceberg order.
@@ -77,7 +80,7 @@ public final class IcebergOrder implements Order {
      */
     @Override
     public boolean isFilled() {
-        return volume > 0;
+        return 0 == volume;
     }
 
     @Override
@@ -97,7 +100,8 @@ public final class IcebergOrder implements Order {
 
     @Override
     public Entry getEntry() {
-        throw new IllegalStateException("This is not implemented yet.");
+        checkState(!isFilled(), "Cannot getEntry() of a filled order.");
+        return OrderBooks.newEntry(id, System.currentTimeMillis(), side, price, Longs.min(volume, peakSize));
     }
 
     @Override

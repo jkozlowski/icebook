@@ -6,12 +6,21 @@
 
 package icebook;
 
+import com.google.common.base.Optional;
 import com.google.common.io.CharStreams;
 import com.google.common.io.LineProcessor;
+import icebook.book.OrderBook;
+import icebook.book.OrderBooks;
+import icebook.exec.ExecutionEngine;
+import icebook.exec.Trade;
 import icebook.input.Parsers;
+import icebook.order.Order;
+import icebook.order.Side;
 import icebook.output.Appenders;
+import org.codehaus.jparsec.Parser;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.SortedSet;
 
 /**
@@ -39,10 +48,23 @@ public final class Main {
         }
 
         try {
+            final Parser<Optional<Order>> parser = Parsers.newOrderParser();
+            final OrderBook book = OrderBooks.newDefaultOrderBook();
+            final ExecutionEngine engine = new ExecutionEngine(book);
+
             CharStreams.readLines(Suppliers.newStdinInputSupplier(), new LineProcessor<Void>() {
                 @Override
-                public boolean processLine(String line) throws IOException {
-                    System.out.println  (line);
+                public boolean processLine(final String line) throws IOException {
+                    final Optional<Order> order = parser.parse(line);
+                    if (order.isPresent()) {
+                        final Collection<Trade> trades = engine.insert(order.get());
+                        Appenders.append(System.out, trades);
+                        Appenders.append(System.out, book.toSortedSet(Side.SELL), book.toSortedSet(Side.BUY));
+                    }
+                    else {
+                        System.err.format("Could not parse line: '%s'", line);
+                    }
+
                     return true;
                 }
 

@@ -7,6 +7,7 @@
 package icebook.book;
 
 import icebook.book.OrderBook.Entry;
+import icebook.exec.Trade;
 import icebook.order.Side;
 import org.testng.annotations.Test;
 
@@ -63,6 +64,19 @@ public class EntryImplTest {
         assertThat(entry.getSide(), is(Side.SELL));
         assertThat(entry.getPrice(), is(12L));
         assertThat(entry.getVolume(), is(130L));
+    }
+
+    @Test
+    public void testIsFilledNotFilled() {
+        final Entry entry = new EntryImpl(1, TIMESTAMP, Side.SELL, PRICE, 130);
+        entry.execute(new Trade(123, 1, PRICE, 130));
+        assertThat(entry.isFilled(), is(true));
+    }
+
+    @Test
+    public void testIsFilledFilled() {
+        assertThat(SELL.isFilled(), is(false));
+        assertThat(BUY.isFilled(), is(false));
     }
 
     @Test(expectedExceptions = NullPointerException.class)

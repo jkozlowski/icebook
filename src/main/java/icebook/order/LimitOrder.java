@@ -9,6 +9,7 @@ package icebook.order;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import icebook.book.OrderBook.Entry;
+import icebook.book.OrderBooks;
 import icebook.exec.Trade;
 
 import javax.annotation.Nonnull;
@@ -72,7 +73,7 @@ public final class LimitOrder implements Order {
      */
     @Override
     public boolean isFilled() {
-        return volume > 0;
+        return 0 == volume;
     }
 
     @Override
@@ -92,7 +93,7 @@ public final class LimitOrder implements Order {
 
     @Override
     public Entry getEntry() {
-        throw new IllegalStateException("This is not implemented yet.");
+        return OrderBooks.newEntry(id, System.currentTimeMillis(), side, price, volume);
     }
 
     @Override
