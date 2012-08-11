@@ -92,7 +92,7 @@ public final class ExecutionEngine {
 
             entryOrder.execute(trade.get());
             if (entryOrder.isFilled()) {
-                orders.remove(entryOrder);
+                orders.remove(entryOrder.getId());
             }
             else if (entry.isFilled()) {
                 book.insert(entryOrder.getEntry());
