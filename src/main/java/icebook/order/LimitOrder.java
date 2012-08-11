@@ -25,13 +25,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class LimitOrder implements Order {
 
-    public final Side side;
+    private final Side side;
 
-    public final long id;
+    private final long id;
 
-    public final long price;
+    private final long price;
 
-    public final long quantity;
+    private final long quantity;
 
     public LimitOrder(final Side side, final long id, final long price, final long quantity) {
         this.side = checkNotNull(side);

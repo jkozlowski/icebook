@@ -25,15 +25,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class IcebergOrder implements Order {
 
-    public final Side side;
+    private final Side side;
 
-    public final long id;
+    private final long id;
 
-    public final long price;
+    private final long price;
 
-    public final long quantity;
+    private final long quantity;
 
-    public final long peakSize;
+    private final long peakSize;
 
     public IcebergOrder(final Side side, final long id, final long price, final long quantity, final long peakSize) {
         this.side = checkNotNull(side);
