@@ -98,7 +98,9 @@ public class ParsersTest {
         assertThat(comment.parse("  \n").isPresent(), is(Boolean.FALSE));
         assertThat(comment.parse("   ").isPresent(), is(Boolean.FALSE));
         assertThat(comment.parse(" ").isPresent(), is(Boolean.FALSE));
+        assertThat(comment.parse("\n").isPresent(), is(Boolean.FALSE));
         assertThat(comment.parse("\t\n\r ").isPresent(), is(Boolean.FALSE));
+        assertThat(comment.parse("").isPresent(), is(Boolean.FALSE));
     }
 
     @Test(expectedExceptions = NullPointerException.class)

@@ -124,7 +124,7 @@ public final class Parsers {
      * @return {@link Parser} that ignores {@link Scanners#WHITESPACES} and {@link Parsers#comment()}.
      */
     static final Parser<Optional<Order>> ignore() {
-        return org.codehaus.jparsec.Parsers.or(comment(), Scanners.WHITESPACES).map(
+        return org.codehaus.jparsec.Parsers.or(comment(), Scanners.WHITESPACES, org.codehaus.jparsec.Parsers.EOF).map(
                 new Map<Object, Optional<Order>>() {
                     @Override
                     public Optional<Order> map(Object o) {
