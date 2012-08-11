@@ -16,6 +16,8 @@ import org.codehaus.jparsec._;
 import org.codehaus.jparsec.functors.Map;
 import org.codehaus.jparsec.functors.Map2;
 import org.codehaus.jparsec.misc.Mapper;
+import org.codehaus.jparsec.pattern.CharPredicates;
+import org.codehaus.jparsec.pattern.Patterns;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -122,7 +124,7 @@ public final class Parsers {
      * @return {@link Parser} that ignores {@link Scanners#WHITESPACES} and {@link Parsers#comment()}.
      */
     static final Parser<Optional<Order>> ignore() {
-        return org.codehaus.jparsec.Parsers.or(comment(), Scanners.WHITESPACES.many_()).map(
+        return org.codehaus.jparsec.Parsers.or(comment(), Scanners.WHITESPACES).map(
                 new Map<Object, Optional<Order>>() {
                     @Override
                     public Optional<Order> map(Object o) {
@@ -137,13 +139,15 @@ public final class Parsers {
      * @return a {@link Parser} for comments.
      */
     static final Parser<Optional<Order>> comment() {
-        return Scanners.WHITESPACES.next(Scanners.isChar('#')).next(Scanners.ANY_CHAR.many().map(
-                new Map<List<_>, Optional<Order>>() {
-                    @Override
-                    public Optional<Order> map(List<_> list) {
-                        return Optional.absent();
-                    }
-                }));
+        return Scanners.pattern(Patterns.many(CharPredicates.IS_WHITESPACE), "zero or more whitespaces")
+                .next(Scanners.isChar('#'))
+                .next(Scanners.ANY_CHAR.many().map(
+                        new Map<List<_>, Optional<Order>>() {
+                            @Override
+                            public Optional<Order> map(List<_> list) {
+                                return Optional.absent();
+                            }
+                        }));
     }
 
     /**
