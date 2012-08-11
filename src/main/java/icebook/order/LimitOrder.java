@@ -10,12 +10,14 @@ import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import icebook.book.OrderBook.Entry;
 import icebook.book.OrderBooks;
+import icebook.exec.TimeSource;
 import icebook.exec.Trade;
 
 import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 /**
  * Defines a limit order.
@@ -92,8 +94,10 @@ public final class LimitOrder implements Order {
     }
 
     @Override
-    public Entry getEntry() {
-        return OrderBooks.newEntry(id, System.currentTimeMillis(), side, price, volume);
+    public Entry getEntry(@Nonnull final TimeSource timeSource) {
+        checkNotNull(timeSource);
+        checkState(!isFilled(), "Cannot getEntry() of a filled order.");
+        return OrderBooks.newEntry(id, timeSource.getTime(), side, price, volume);
     }
 
     @Override

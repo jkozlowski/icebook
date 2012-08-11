@@ -11,6 +11,7 @@ import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.primitives.Longs;
 import icebook.book.OrderBook.Entry;
 import icebook.book.OrderBooks;
+import icebook.exec.TimeSource;
 import icebook.exec.Trade;
 
 import javax.annotation.Nonnull;
@@ -99,9 +100,10 @@ public final class IcebergOrder implements Order {
     }
 
     @Override
-    public Entry getEntry() {
+    public Entry getEntry(@Nonnull final TimeSource timeSource) {
+        checkNotNull(timeSource);
         checkState(!isFilled(), "Cannot getEntry() of a filled order.");
-        return OrderBooks.newEntry(id, System.currentTimeMillis(), side, price, Longs.min(volume, peakSize));
+        return OrderBooks.newEntry(id, timeSource.getTime(), side, price, Longs.min(volume, peakSize));
     }
 
     @Override

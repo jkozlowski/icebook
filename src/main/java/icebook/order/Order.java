@@ -7,6 +7,7 @@
 package icebook.order;
 
 import icebook.book.OrderBook.Entry;
+import icebook.exec.TimeSource;
 import icebook.exec.Trade;
 
 import javax.annotation.Nonnull;
@@ -69,7 +70,8 @@ public interface Order {
      *
      * @return {@link Entry} for the remaining volume of this {@link Order}.
      *
+     * @throws NullPointerException  if {@code timeSource} is null.
      * @throws IllegalStateException if this {@link Order} is filled.
      */
-    Entry getEntry();
+    Entry getEntry(@Nonnull final TimeSource timeSource);
 }

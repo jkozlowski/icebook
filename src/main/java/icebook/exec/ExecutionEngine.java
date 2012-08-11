@@ -32,6 +32,8 @@ import static com.google.common.base.Preconditions.checkState;
  */
 public final class ExecutionEngine {
 
+    private final TimeSource timeSource;
+
     private final Map<Long, Order> orders;
 
     private final OrderBook book;
@@ -48,6 +50,7 @@ public final class ExecutionEngine {
         checkNotNull(book, "book cannot be null.");
         checkArgument(book.isEmpty(Side.SELL), "book must be empty.");
         checkArgument(book.isEmpty(Side.BUY), "book must be empty.");
+        this.timeSource = new AtomicLongTimeSource();
         this.book = book;
         this.orders = Maps.newHashMap();
     }
@@ -95,14 +98,14 @@ public final class ExecutionEngine {
                 orders.remove(entryOrder.getId());
             }
             else if (entry.isFilled()) {
-                book.insert(entryOrder.getEntry());
+                book.insert(entryOrder.getEntry(timeSource));
             }
 
         }
 
         if (!order.isFilled()) {
             orders.put(order.getId(), order);
-            book.insert(order.getEntry());
+            book.insert(order.getEntry(timeSource));
         }
 
         return trades;
