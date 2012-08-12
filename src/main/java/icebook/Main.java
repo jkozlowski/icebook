@@ -7,6 +7,8 @@
 package icebook;
 
 import com.google.common.io.CharStreams;
+import icebook.book.OrderBooks;
+import icebook.exec.ExecutionEngine;
 import icebook.input.Parsers;
 import icebook.output.Appenders;
 
@@ -38,7 +40,9 @@ public final class Main {
         }
 
         try {
-            CharStreams.readLines(Suppliers.newStdinInputSupplier(), new OrderLineProcessor(System.out, System.err));
+            final ExecutionEngine engine = new ExecutionEngine(OrderBooks.newDefaultOrderBook());
+            final OrderLineProcessor processor = new OrderLineProcessor(System.out, System.err, engine);
+            CharStreams.readLines(Suppliers.newStdinInputSupplier(), processor);
         }
         catch (IOException e) {
             System.err.print("We hit an IOException: ");

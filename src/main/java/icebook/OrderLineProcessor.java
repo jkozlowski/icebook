@@ -8,8 +8,6 @@ package icebook;
 
 import com.google.common.base.Optional;
 import com.google.common.io.LineProcessor;
-import icebook.book.OrderBook;
-import icebook.book.OrderBooks;
 import icebook.exec.ExecutionEngine;
 import icebook.exec.Trade;
 import icebook.input.Parsers;
@@ -45,8 +43,6 @@ final class OrderLineProcessor implements LineProcessor<Void> {
 
     private final Parser<Optional<Order>> parser;
 
-    private final OrderBook book;
-
     private final ExecutionEngine engine;
 
     /**
@@ -55,14 +51,15 @@ final class OrderLineProcessor implements LineProcessor<Void> {
      * @param out {@link Appendable} to output to.
      * @param err {@link Appendable} to send error messages to.
      */
-    public OrderLineProcessor(@Nonnull final Appendable out, @Nonnull final Appendable err) {
-        checkNotNull(out);
-        checkNotNull(err);
+    public OrderLineProcessor(@Nonnull final Appendable out, @Nonnull final Appendable err,
+                              @Nonnull final ExecutionEngine engine) {
+        checkNotNull(out, "out cannot be null.");
+        checkNotNull(err, "err cannot be null.");
+        checkNotNull(engine, "engine cannot be null.");
         this.out = out;
         this.err = new Formatter(err, Locale.ENGLISH);
         parser = Parsers.newOrderParser();
-        book = OrderBooks.newDefaultOrderBook();
-        engine = new ExecutionEngine(book);
+        this.engine = engine;
     }
 
     @Override
@@ -71,7 +68,7 @@ final class OrderLineProcessor implements LineProcessor<Void> {
         if (order.isPresent()) {
             final Collection<Trade> trades = engine.insert(order.get());
             Appenders.append(out, trades);
-            Appenders.append(out, book.toImmutableSortedSet(Side.SELL), book.toImmutableSortedSet(Side.BUY));
+            Appenders.append(out, engine.toImmutableSortedSet(Side.SELL), engine.toImmutableSortedSet(Side.BUY));
         }
         else {
             err.format("Could not parse line: '%s'%n", line).flush();

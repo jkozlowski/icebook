@@ -6,6 +6,8 @@
 
 package icebook;
 
+import icebook.book.OrderBooks;
+import icebook.exec.ExecutionEngine;
 import org.testng.annotations.Test;
 
 /**
@@ -18,12 +20,17 @@ public class OrderLineProcessorTest {
 
     @Test(expectedExceptions = NullPointerException.class)
     public void testConstructorNullOut() {
-        new OrderLineProcessor(null, new StringBuilder());
+        new OrderLineProcessor(null, new StringBuilder(), new ExecutionEngine(OrderBooks.newDefaultOrderBook()));
     }
 
     @Test(expectedExceptions = NullPointerException.class)
     public void testConstructorNullErr() {
-        new OrderLineProcessor(new StringBuilder(), null);
+        new OrderLineProcessor(new StringBuilder(), null, new ExecutionEngine(OrderBooks.newDefaultOrderBook()));
+    }
+
+    @Test(expectedExceptions = NullPointerException.class)
+    public void testConstructorNullExecutionEngine() {
+        new OrderLineProcessor(new StringBuilder(), new StringBuilder(), null);
     }
 
 
