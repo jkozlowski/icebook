@@ -32,6 +32,8 @@ public final class Trade {
 
     private final long quantity;
 
+    private final int hashCode;
+
     /**
      * Default constructor.
      *
@@ -39,6 +41,8 @@ public final class Trade {
      * @param sellOrderId id of the sell order.
      * @param price       execution price.
      * @param quantity    quantity executed.
+     *
+     * @throws IllegalArgumentException if any argument is {@code <= 0}.
      */
     public Trade(@Nonnegative final long buyOrderId,
                  @Nonnegative final long sellOrderId,
@@ -49,6 +53,7 @@ public final class Trade {
         this.sellOrderId = sellOrderId;
         this.price = price;
         this.quantity = quantity;
+        this.hashCode = Objects.hashCode(this.buyOrderId, this.sellOrderId, this.price, this.quantity);
     }
 
     /**
@@ -104,11 +109,7 @@ public final class Trade {
 
     @Override
     public int hashCode() {
-        int result = (int) (buyOrderId ^ (buyOrderId >>> 32));
-        result = 31 * result + (int) (sellOrderId ^ (sellOrderId >>> 32));
-        result = 31 * result + (int) (price ^ (price >>> 32));
-        result = 31 * result + (int) (quantity ^ (quantity >>> 32));
-        return result;
+        return hashCode;
     }
 
     @Override
