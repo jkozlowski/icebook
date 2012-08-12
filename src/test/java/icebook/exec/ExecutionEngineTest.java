@@ -10,8 +10,7 @@ import com.google.common.base.Optional;
 import icebook.book.OrderBook;
 import icebook.book.OrderBook.Entry;
 import icebook.book.OrderBooks;
-import icebook.order.IcebergOrder;
-import icebook.order.LimitOrder;
+import icebook.order.Order;
 import icebook.order.Orders;
 import icebook.order.Side;
 import org.testng.annotations.Test;
@@ -35,16 +34,16 @@ public class ExecutionEngineTest {
 
     private static final Entry buyEntry = OrderBooks.newEntry(1, 123, Side.BUY, PRICE, VOLUME);
 
-    private static final IcebergOrder buyIceberg
-            = (IcebergOrder) Orders.newIcebergOrder(Side.BUY, 1, PRICE, VOLUME, 1).get();
+    private static final Order buyIceberg
+            = Orders.newIcebergOrder(Side.BUY, 1, PRICE, VOLUME, 1).get();
 
-    private static final IcebergOrder sellIceberg
-            = (IcebergOrder) Orders.newIcebergOrder(Side.SELL, 1, PRICE, VOLUME, 1).get();
+    private static final Order sellIceberg
+            = Orders.newIcebergOrder(Side.SELL, 1, PRICE, VOLUME, 1).get();
 
-    private static final LimitOrder buyLimit = (LimitOrder) Orders.newLimitOrder(Side.BUY, 1, PRICE, VOLUME).get();
+    private static final Order buyLimit = Orders.newLimitOrder(Side.BUY, 1, PRICE, VOLUME).get();
 
-    private static final LimitOrder sellLimit
-            = (LimitOrder) Orders.newLimitOrder(Side.SELL, 1, PRICE, VOLUME).get();
+    private static final Order sellLimit
+            = Orders.newLimitOrder(Side.SELL, 1, PRICE, VOLUME).get();
 
     private static final ExecutionEngine emptyEngine = new ExecutionEngine(OrderBooks.newDefaultOrderBook());
 

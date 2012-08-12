@@ -25,7 +25,7 @@ import static com.google.common.base.Preconditions.checkState;
  * @author Jakub D Kozlowski
  * @since 1.0
  */
-public final class LimitOrder implements Order {
+final class LimitOrder implements Order {
 
     private final Side side;
 
