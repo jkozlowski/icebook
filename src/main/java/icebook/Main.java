@@ -45,5 +45,10 @@ public final class Main {
             e.printStackTrace(System.err);
             System.exit(-1);
         }
+        catch (Throwable e) {
+            System.err.print("There was an unrecoverable error: ");
+            e.printStackTrace(System.err);
+            System.exit(-1);
+        }
     }
 }
