@@ -7,11 +7,11 @@
 package icebook.book;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableSortedSet;
 import icebook.exec.Trade;
 import icebook.order.Side;
 
 import javax.annotation.Nonnull;
-import java.util.SortedSet;
 
 /**
  * Maintains sorted sets of {@link Side#SELL} and {@link Side#BUY} {@link Entry}ies.
@@ -138,13 +138,13 @@ public interface OrderBook {
     boolean isEmpty(@Nonnull final Side side);
 
     /**
-     * Gets a sorted set of {@link Entry}ies for this {@code side}.
+     * Gets an immutable sorted set of {@link Entry}ies for this {@code side}.
      *
      * @param side side to get.
      *
-     * @return {@link SortedSet} of {@link Entry}ies for this {@code side}.
+     * @return {@link ImmutableSortedSet} of {@link Entry}ies for this {@code side}.
      *
      * @throws NullPointerException if {@code side} is null.
      */
-    SortedSet<Entry> toSortedSet(@Nonnull final Side side);
+    ImmutableSortedSet<Entry> toImmutableSortedSet(@Nonnull final Side side);
 }

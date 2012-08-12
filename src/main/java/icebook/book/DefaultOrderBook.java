@@ -7,18 +7,17 @@
 package icebook.book;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSortedSet;
 import icebook.order.Side;
 
 import javax.annotation.Nonnull;
 import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.SortedSet;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Default {@link OrderBook} implementation that uses {@link PriorityQueue}s to store {@link Entry}ies directly.
+ * Default {@link OrderBook} implementation that uses {@link PriorityQueue}s to store {@link Entry}ies.
  *
  * @author Jakub D Kozlowski
  * @since 1.0
@@ -78,8 +77,8 @@ final class DefaultOrderBook implements OrderBook {
      * {@inheritDoc}
      */
     @Override
-    public SortedSet<Entry> toSortedSet(@Nonnull final Side side) {
-        return Sets.newTreeSet(getQueue(side));
+    public ImmutableSortedSet<Entry> toImmutableSortedSet(@Nonnull final Side side) {
+        return ImmutableSortedSet.copyOf(getQueue(side));
     }
 
     /**

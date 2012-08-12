@@ -71,7 +71,7 @@ final class OrderLineProcessor implements LineProcessor<Void> {
         if (order.isPresent()) {
             final Collection<Trade> trades = engine.insert(order.get());
             Appenders.append(out, trades);
-            Appenders.append(out, book.toSortedSet(Side.SELL), book.toSortedSet(Side.BUY));
+            Appenders.append(out, book.toImmutableSortedSet(Side.SELL), book.toImmutableSortedSet(Side.BUY));
         }
         else {
             err.format("Could not parse line: '%s'%n", line).flush();

@@ -7,6 +7,7 @@
 package icebook.exec;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.primitives.Longs;
@@ -138,5 +139,19 @@ public final class ExecutionEngine {
         }
 
         return Optional.absent();
+    }
+
+    /**
+     * Gets an immutable sorted set of {@link Entry}ies for this {@code side}.
+     *
+     * @param side side to get.
+     *
+     * @return {@link ImmutableSortedSet} of {@link Entry}ies for this {@code side}.
+     *
+     * @throws NullPointerException if {@code side} is null.
+     */
+    public ImmutableSortedSet<Entry> toImmutableSortedSet(@Nonnull final Side side) {
+        checkNotNull(side, "side cannot be null.");
+        return book.toImmutableSortedSet(side);
     }
 }

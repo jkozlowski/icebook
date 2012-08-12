@@ -30,8 +30,8 @@ public class DefaultOrderBookTest {
     @Test
     public void testConstructor() {
         final OrderBook book = OrderBooks.newDefaultOrderBook();
-        assertThat(book.toSortedSet(Side.SELL).isEmpty(), is(true));
-        assertThat(book.toSortedSet(Side.BUY).isEmpty(), is(true));
+        assertThat(book.toImmutableSortedSet(Side.SELL).isEmpty(), is(true));
+        assertThat(book.toImmutableSortedSet(Side.BUY).isEmpty(), is(true));
     }
 
     @Test
@@ -41,7 +41,7 @@ public class DefaultOrderBookTest {
         final Entry entry2 = OrderBooks.newEntry(2, 124, Side.SELL, 124, 123);
         book.insert(entry1);
         book.insert(entry2);
-        assertThat(book.toSortedSet(Side.SELL).toArray(new Entry[]{}), is(new Entry[]{entry1, entry2}));
+        assertThat(book.toImmutableSortedSet(Side.SELL).toArray(new Entry[]{}), is(new Entry[]{entry1, entry2}));
     }
 
     @Test
@@ -51,7 +51,7 @@ public class DefaultOrderBookTest {
         final Entry entry2 = OrderBooks.newEntry(2, 124, Side.BUY, 124, 123);
         book.insert(entry1);
         book.insert(entry2);
-        assertThat(book.toSortedSet(Side.BUY).toArray(new Entry[]{}), is(new Entry[]{entry2, entry1}));
+        assertThat(book.toImmutableSortedSet(Side.BUY).toArray(new Entry[]{}), is(new Entry[]{entry2, entry1}));
     }
 
     @Test
