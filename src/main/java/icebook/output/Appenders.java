@@ -6,6 +6,11 @@
 
 package icebook.output;
 
+import com.google.common.base.Equivalence;
+import com.google.common.base.Equivalence.Wrapper;
+import com.google.common.base.Objects;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import icebook.book.OrderBook.Entry;
 import icebook.exec.Trade;
 import icebook.order.Side;
@@ -15,8 +20,12 @@ import java.util.Collection;
 import java.util.Formatter;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
+import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -122,7 +131,7 @@ public final class Appenders {
 
     /**
      * Appends to {@code out} a formatted representation of {@code trades}, where the trade message will be contained
-     * ona single line with nothing else present on the same line, and be in comma separated format with the following
+     * on a single line with nothing else present on the same line, and be in comma separated format with the following
      * fields:
      *
      * <table>
@@ -153,6 +162,9 @@ public final class Appenders {
      * <p>If {@code trades} is empty, this method will not append anything to {@code out}. <em>This method will
      * explicitly flush {@code out}</em>.</p>
      *
+     * <p>If {@code trades} contains multiple trades between the same id's, those will be collapsed into a single
+     * trade.</p>
+     *
      * @param out    {@link Appendable} to append to.
      * @param trades {@link Trade}s to render.
      *
@@ -162,12 +174,36 @@ public final class Appenders {
      */
     public static Appendable append(@Nonnull final Appendable out, @Nonnull final Collection<Trade> trades) {
 
-        checkNotNull(out);
-        checkNotNull(trades);
+        checkNotNull(out, "out cannot be null.");
+        checkNotNull(trades, "trades cannot be null.");
 
         final Formatter format = new Formatter(out, Locale.ENGLISH);
 
+        // Collapse trades.
+        final BiMap<Long, Wrapper<Trade>> tradesBiMap = HashBiMap.create();
+        long counter = 0;
         for (final Trade t : trades) {
+
+            final Wrapper<Trade> wrappedT = idEquivalence.wrap(t);
+            final Long savedCounter = tradesBiMap.inverse().get(wrappedT);
+
+            if (null != savedCounter) {
+                final Trade savedTrade = tradesBiMap.get(savedCounter).get();
+                tradesBiMap.remove(savedCounter);
+                tradesBiMap.put(counter, merge(t, savedTrade));
+            }
+            else {
+                tradesBiMap.put(counter, wrappedT);
+            }
+
+            counter++;
+        }
+
+        // Sort the trades.
+        final SortedMap<Long, Wrapper<Trade>> sortedTrades = new TreeMap<Long, Wrapper<Trade>>(tradesBiMap);
+
+        for (final Map.Entry<Long, Wrapper<Trade>> e : sortedTrades.entrySet()) {
+            final Trade t = e.getValue().get();
             format.format("%d,%d,%d,%d%n", t.getBuyOrderId(), t.getSellOrderId(), t.getPrice(), t.getQuantity());
         }
 
@@ -175,4 +211,47 @@ public final class Appenders {
 
         return out;
     }
+
+    /**
+     * Gets a merged {@link Trade}, i.e. a {@link Trade} with same {@link Trade#getBuyOrderId()},
+     * {@link Trade#getSellOrderId()} and {@link Trade#getPrice()}, but quantity defined as {@code t1.getQuantity() +
+     * t2.getQuantity()}.
+     *
+     * @param t1 first {@link Trade} to merge.
+     * @param t2 second {@link Trade} to merge.
+     *
+     * @return merged {@link Trade}, wrapped in {@link Wrapper}, defined by {@link #idEquivalence}.
+     */
+    static Wrapper<Trade> merge(@Nonnull final Trade t1, @Nonnull final Trade t2) {
+        checkNotNull(t1, "t1 cannot be null.");
+        checkNotNull(t2, "t2 cannot be null.");
+        checkArgument(t1.getBuyOrderId() == t2.getBuyOrderId(), "buyOrderIds must be equal.");
+        checkArgument(t1.getSellOrderId() == t2.getSellOrderId(), "sellOrderIds must be equal.");
+        checkArgument(t1.getPrice() == t2.getPrice(), "prices must be equal.");
+        return idEquivalence.wrap(new Trade(t1.getBuyOrderId(), t1.getSellOrderId(), t1.getPrice(),
+                                            t1.getQuantity() + t2.getQuantity()));
+    }
+
+    /**
+     * Defines an equivalence for {@link Trade}s that declares two {@link Trade}s equivalent,
+     * if they refer to the same exact {@link Trade#getBuyOrderId()} and {@link Trade#getSellOrderId()}.
+     */
+    private static final Equivalence<Trade> idEquivalence = new Equivalence<Trade>() {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected boolean doEquivalent(@Nonnull final Trade a, @Nonnull final Trade b) {
+            return a.getBuyOrderId() == b.getBuyOrderId() && a.getSellOrderId() == b.getSellOrderId();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected int doHash(@Nonnull final Trade trade) {
+            return Objects.hashCode(trade.getBuyOrderId(), trade.getSellOrderId());
+        }
+    };
 }

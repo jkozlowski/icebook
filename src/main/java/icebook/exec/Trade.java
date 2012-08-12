@@ -100,9 +100,9 @@ public final class Trade {
         Trade trade = (Trade) o;
 
         if (buyOrderId != trade.buyOrderId) return false;
+        if (sellOrderId != trade.sellOrderId) return false;
         if (price != trade.price) return false;
         if (quantity != trade.quantity) return false;
-        if (sellOrderId != trade.sellOrderId) return false;
 
         return true;
     }
