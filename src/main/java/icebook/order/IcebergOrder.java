@@ -57,7 +57,7 @@ final class IcebergOrder extends AbstractOrder {
      */
     @Override
     public Entry getEntry(@Nonnull final TimeSource timeSource) {
-        checkNotNull(timeSource);
+        checkNotNull(timeSource, "timeSource cannot be null.");
         checkState(!isFilled(), "Cannot getEntry() of a filled order.");
         return OrderBooks.newEntry(getId(),
                                    timeSource.getTime(),
@@ -84,6 +84,9 @@ final class IcebergOrder extends AbstractOrder {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return Objects.hashCode(getSide(), getId(), getPrice(), getVolume(), peakSize);

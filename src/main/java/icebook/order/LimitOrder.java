@@ -34,9 +34,12 @@ final class LimitOrder extends AbstractOrder {
         super(id, side, price, volume);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Entry getEntry(@Nonnull final TimeSource timeSource) {
-        checkNotNull(timeSource);
+        checkNotNull(timeSource, "timeSource cannot be null.");
         checkState(!isFilled(), "Cannot getEntry() of a filled order.");
         return OrderBooks.newEntry(getId(), timeSource.getTime(), getSide(), getPrice(), getVolume());
     }
