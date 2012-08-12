@@ -17,6 +17,7 @@ import icebook.order.Order;
 import icebook.order.Side;
 import icebook.output.Appenders;
 import org.codehaus.jparsec.Parser;
+import org.codehaus.jparsec.error.ParserException;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -67,13 +68,19 @@ final class OrderLineProcessor implements LineProcessor<Void> {
 
     @Override
     public boolean processLine(@Nonnull final String line) throws IOException {
-        final Optional<Order> order = parser.parse(line);
-        if (order.isPresent()) {
-            final Collection<Trade> trades = engine.insert(order.get());
-            Appenders.append(out, trades);
-            Appenders.append(out, book.toSortedSet(Side.SELL), book.toSortedSet(Side.BUY));
+        try {
+            final Optional<Order> order = parser.parse(line);
+            if (order.isPresent()) {
+                final Collection<Trade> trades = engine.insert(order.get());
+                Appenders.append(out, trades);
+                Appenders.append(out, book.toSortedSet(Side.SELL), book.toSortedSet(Side.BUY));
+            }
+            else {
+                err.format("Could not parse line: '%s'%n", line).flush();
+            }
+
         }
-        else {
+        catch (Exception pe) {
             err.format("Could not parse line: '%s'%n", line).flush();
         }
 
