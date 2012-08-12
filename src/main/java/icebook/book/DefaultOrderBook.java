@@ -32,8 +32,8 @@ final class DefaultOrderBook implements OrderBook {
      * Default constructor.
      */
     public DefaultOrderBook() {
-        this.buys = new PriorityQueue<>();
-        this.sells = new PriorityQueue<>();
+        this.buys = new PriorityQueue<Entry>();
+        this.sells = new PriorityQueue<Entry>();
     }
 
     /**
