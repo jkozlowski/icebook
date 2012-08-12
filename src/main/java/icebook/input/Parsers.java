@@ -44,19 +44,37 @@ public final class Parsers {
      * @return {@link Parser} for parsing {@link Order}s.
      */
     public static final Parser<Optional<Order>> newOrderParser() {
-        return org.codehaus.jparsec.Parsers.or(icebergOrder(), limitOrder(), ignore());
+        return org.codehaus.jparsec.Parsers.or(icebergOrder(), limitOrder(), ignored());
     }
 
     /**
      * Gets a {@link Parser} for an iceberg order.
      *
-     * @return a {@link Parser} for an iceberg order.
+     * <p>An iceberg order entry consists of the following fields, with comma
+     * separated values:</p>
+     *
+     * <table>
+     * <tr><th>Field Index</th><td>Type</td><th>Description</th></tr>
+     * <tr><td>0</td><td>Character</td><td>‘B’ for a buy order, ‘S’ for a sell order</td></tr>
+     * <tr><td>1</td><td>Integer</td><td>unique order identifier</td></tr>
+     * <tr><td>2</td><td>Integer</td><td>price in pence (>0)</td></tr>
+     * <tr><td>3</td><td>Integer</td><td>quantity of order (>0)</td></tr>
+     * <tr><td>4</td><td>Integer</td><td>peak size (>0)</td></tr>
+     * </table>
+     *
+     * Example:
+     * <pre>S,100345,5103,100000,10000</pre>
+     *
+     * Description:
+     * <pre>Iceberg order id 100345: Sell 100,000 at 5103p, with a peak size of 10,000</pre>.
+     *
+     * @return {@link Parser} for an iceberg order.
      */
     static final Parser<Optional<Order>> icebergOrder() {
         return new Mapper<Optional<Order>>() {
             Optional<Order> map(Side side, String s, String s1, String s2, String s3) {
-                return Orders.newIcebergOrder(side, Integer.parseInt(s), Integer.parseInt(s1), Integer.parseInt(s2),
-                                              Integer.parseInt(s3));
+                return Orders.newIcebergOrder(side, Long.parseLong(s), Long.parseLong(s1), Long.parseLong(s2),
+                                              Long.parseLong(s3));
             }
         }.sequence(
                 followedByComma(org.codehaus.jparsec.Parsers.or(buy(), sell())),
@@ -70,12 +88,26 @@ public final class Parsers {
     /**
      * Gets a {@link Parser} for a limit order.
      *
-     * @return a {@link Parser} for a limit order.
+     * <p>A limit order entry consists of the following fields, with comma
+     * separated values:</p>
+     *
+     * <table>
+     * <tr><th>Field Index</th><td>Type</td><th>Description</th></tr>
+     * <tr><td>0</td><td>Character</td><td>‘B’ for a buy order, ‘S’ for a sell order</td></tr>
+     * <tr><td>1</td><td>Integer</td><td>unique order identifier</td></tr>
+     * <tr><td>2</td><td>Integer</td><td>price in pence (>0)</td></tr>
+     * <tr><td>3</td><td>Integer</td><td>quantity of order (>0)</td></tr>
+     * </table>
+     *
+     * Example:
+     * <pre>B,100322,5103,7500</pre>
+     *
+     * @return {@link Parser} for a limit order.
      */
     static final Parser<Optional<Order>> limitOrder() {
         return new Mapper<Optional<Order>>() {
             Optional<Order> map(Side side, String s, String s1, String s2) {
-                return Orders.newLimitOrder(side, Integer.parseInt(s), Integer.parseInt(s1), Integer.parseInt(s2));
+                return Orders.newLimitOrder(side, Long.parseLong(s), Long.parseLong(s1), Long.parseLong(s2));
             }
         }.sequence(
                 followedByComma(org.codehaus.jparsec.Parsers.or(buy(), sell())),
@@ -103,7 +135,7 @@ public final class Parsers {
     /**
      * Gets a {@link Parser} for {@link Side#BUY}.
      *
-     * @return a {@link Parser} for {@link Side#BUY}
+     * @return {@link Parser} for {@link Side#BUY}
      */
     static final Parser<Side> buy() {
         return Scanners.isChar('B').map(mapTo(Side.BUY));
@@ -112,18 +144,19 @@ public final class Parsers {
     /**
      * Gets a {@link Parser} for {@link Side#SELL}.
      *
-     * @return a {@link Parser} for {@link Side#SELL}
+     * @return {@link Parser} for {@link Side#SELL}
      */
     static final Parser<Side> sell() {
         return Scanners.isChar('S').map(mapTo(Side.SELL));
     }
 
     /**
-     * Gets a {@link Parser} that ignores {@link Scanners#WHITESPACES} and {@link Parsers#comment()}.
+     * Gets a {@link Parser} that accepts {@link Scanners#WHITESPACES}, {@link Parsers#comment()} and {@link org
+     * .codehaus.jparsec.Parsers.EOF} (to ensure that an empty string gets accepted).
      *
-     * @return {@link Parser} that ignores {@link Scanners#WHITESPACES} and {@link Parsers#comment()}.
+     * @return {@link Parser} for ignored parts of the grammar.
      */
-    static final Parser<Optional<Order>> ignore() {
+    static final Parser<Optional<Order>> ignored() {
         return org.codehaus.jparsec.Parsers.or(comment(), Scanners.WHITESPACES, org.codehaus.jparsec.Parsers.EOF).map(
                 new Map<Object, Optional<Order>>() {
                     @Override
@@ -134,9 +167,10 @@ public final class Parsers {
     }
 
     /**
-     * Gets a {@link Parser} for comments.
+     * Gets a {@link Parser} for comments, where a comment is defined as zero or more whitespace characters,
+     * followed by {@code '#'} character, followed by zero or more characters.
      *
-     * @return a {@link Parser} for comments.
+     * @return {@link Parser} for comments.
      */
     static final Parser<Optional<Order>> comment() {
         return Scanners.pattern(Patterns.many(CharPredicates.IS_WHITESPACE), "zero or more whitespaces")

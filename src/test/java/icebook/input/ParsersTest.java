@@ -94,7 +94,7 @@ public class ParsersTest {
 
     @Test
     public void testIgnore() {
-        final Parser<Optional<Order>> comment = Parsers.ignore();
+        final Parser<Optional<Order>> comment = Parsers.ignored();
         assertThat(comment.parse("  \n").isPresent(), is(Boolean.FALSE));
         assertThat(comment.parse("   ").isPresent(), is(Boolean.FALSE));
         assertThat(comment.parse(" ").isPresent(), is(Boolean.FALSE));
