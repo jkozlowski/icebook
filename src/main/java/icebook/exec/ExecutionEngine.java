@@ -57,19 +57,20 @@ public final class ExecutionEngine {
     }
 
     /**
-     * Inserts this {@code order}. It is the responsibility of the user of this class to make sure that an order does
-     * not get inserted twice.
+     * Inserts this {@code order}.
      *
      * @param order {@link Order} to insert.
      *
      * @return all trades that were executed if the {@code order} was aggressive,
-     *         or an empty collection if the {@code order was passive.}
+     *         or an empty collection if the {@code order} was passive.
      *
-     * @throws IllegalArgumentException if {@code order} is filled.
+     * @throws IllegalArgumentException if {@code order} is filled, or an {@link Order} with this {@link
+     *                                  Order#getId()} already exists in this {@link ExecutionEngine}.
      */
     public Collection<Trade> insert(@Nonnull final Order order) {
         checkNotNull(order, "order cannot be null.");
-        checkArgument(!order.isFilled());
+        checkArgument(!order.isFilled(), "order cannot be filled.");
+        checkArgument(!orders.containsKey(order.getId()), "order already inserted.");
 
         final Collection<Trade> trades = Lists.newLinkedList();
 
@@ -123,7 +124,7 @@ public final class ExecutionEngine {
      * @throws NullPointerException     if any argument is null.
      * @throws IllegalArgumentException if {@code newOrder} and {@code entry} are not on the opposite side.
      */
-    public Optional<Trade> match(@Nonnull final Order newOrder, @Nullable final Entry entry) {
+    Optional<Trade> match(@Nonnull final Order newOrder, @Nullable final Entry entry) {
         checkNotNull(newOrder, "newOrder cannot be null.");
         checkNotNull(entry, "entry cannot be null.");
         checkArgument(newOrder.getSide().getOpposite().equals(entry.getSide()),
