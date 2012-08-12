@@ -88,16 +88,17 @@ public final class ExecutionEngine {
             final Order entryOrder = orders.get(entry.getId());
             checkState(null != entryOrder);
 
-            entry.execute(trade.get());
-            if (entry.isFilled()) {
-                book.remove(entry.getSide());
+            book.remove(entry.getSide());
+            final Entry newEntry = entry.execute(trade.get());
+            if (!newEntry.isFilled()) {
+                book.insert(newEntry);
             }
 
             entryOrder.execute(trade.get());
             if (entryOrder.isFilled()) {
                 orders.remove(entryOrder.getId());
             }
-            else if (entry.isFilled()) {
+            else if (newEntry.isFilled()) {
                 book.insert(entryOrder.getEntry(timeSource));
             }
 

@@ -49,12 +49,12 @@ public class EntryImplTest {
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testConstructorWrongPrice() {
-        new EntryImpl(1, 123, Side.SELL, 0, 1);
+        new EntryImpl(1, 123, Side.SELL, -1, 1);
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testConstructorWrongVolume() {
-        new EntryImpl(1, 123, Side.SELL, 1, 0);
+        new EntryImpl(1, 123, Side.SELL, 1, -1);
     }
 
     @Test
@@ -69,8 +69,7 @@ public class EntryImplTest {
     @Test
     public void testIsFilledNotFilled() {
         final Entry entry = new EntryImpl(1, TIMESTAMP, Side.SELL, PRICE, 130);
-        entry.execute(new Trade(123, 1, PRICE, 130));
-        assertThat(entry.isFilled(), is(true));
+        assertThat(entry.execute(new Trade(123, 1, PRICE, 130)).isFilled(), is(true));
     }
 
     @Test

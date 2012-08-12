@@ -49,18 +49,19 @@ final class EntryImpl implements OrderBook.Entry {
      * @param volume    volume of this {@link EntryImpl}.
      *
      * @throws NullPointerException     if {@code side} is null.
-     * @throws IllegalArgumentException if any {@code long} argument is {@code <= 0}
+     * @throws IllegalArgumentException if {@code id}, {@code timestamp} or {@code price} is {@code <= 0},
+     *                                  or {@code volume} is {@code < 0}.
      */
     public EntryImpl(@Nonnegative final long id,
                      @Nonnegative final long timestamp,
                      @Nonnull final Side side,
                      @Nonnegative final long price,
                      @Nonnegative final long volume) {
-        checkArgument(id > 0, "id cannot be negative.");
-        checkArgument(timestamp > 0, "timestamp cannot be negative.");
-        checkNotNull(side, "side cannot be null.");
-        checkArgument(price > 0, "price cannot be negative.");
-        checkArgument(volume > 0, "volume cannot be negative.");
+        checkArgument(id > 0, "id must be greater than 0.");
+        checkArgument(timestamp > 0, "timestamp must be greater than 0.");
+        checkNotNull(side, "side must be greater than 0.");
+        checkArgument(price > 0, "price must be greater than 0.");
+        checkArgument(volume >= 0, "volume cannot be negative.");
 
         this.id = id;
         this.timestamp = timestamp;
@@ -118,8 +119,11 @@ final class EntryImpl implements OrderBook.Entry {
         return 0 == volume;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void execute(@Nonnull final Trade trade) {
+    public Entry execute(@Nonnull final Trade trade) {
         checkNotNull(trade);
         if (side.isBuy()) {
             checkArgument(trade.getBuyOrderId() == id);
@@ -130,7 +134,7 @@ final class EntryImpl implements OrderBook.Entry {
 
         checkArgument(volume >= trade.getQuantity());
 
-        volume -= trade.getQuantity();
+        return new EntryImpl(id, timestamp, side, price, volume - trade.getQuantity());
     }
 
     /**

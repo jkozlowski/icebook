@@ -12,6 +12,7 @@ import icebook.exec.Trade;
 import icebook.order.Side;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 /**
  * Maintains sorted sets of {@link Side#SELL} and {@link Side#BUY} {@link Entry}ies.
@@ -24,6 +25,7 @@ public interface OrderBook {
     /**
      * Single entry in the {@link OrderBook}.
      */
+    @Immutable
     public interface Entry extends Comparable<Entry> {
 
         /**
@@ -69,14 +71,17 @@ public interface OrderBook {
         boolean isFilled();
 
         /**
-         * Executes this {@link Entry}.
+         * Executes this {@link Entry}. Because {@link Entry} is immutable, a new {@link Entry} instance will be
+         * returned, with updated {@link #getVolume()}, and remaining parameters of an {@link Entry} unchanged.
          *
          * @param trade details of the trade.
+         *
+         * @return executed {@link Entry}.
          *
          * @throws NullPointerException     if {@code trade} is null.
          * @throws IllegalArgumentException if {@code trade} does not refer to this {@link Entry}.
          */
-        void execute(@Nonnull final Trade trade);
+        Entry execute(@Nonnull final Trade trade);
 
         /**
          * <em>Note: this class has a natural ordering that is inconsistent with equals.</em> More specifically,
