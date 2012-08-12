@@ -33,9 +33,11 @@
         <testng.version>6.3</testng.version>
         <hamcrest.version>1.1</hamcrest.version>
         <mockito.version>1.9.0</mockito.version>
+        <main.name>icebook.Main</main.name>
+        <maven.assembly.version>2.3</maven.assembly.version>
         <maven.compiler.version>2.3.2</maven.compiler.version>
         <maven.clean.version>2.4.1</maven.clean.version>
-        <maven.assembly.version>2.2.1</maven.assembly.version>
+        <maven.jar.version>2.3.2</maven.jar.version>
         <maven.cobertura.version>2.5.1</maven.cobertura.version>
         <maven.surefire.version>2.10</maven.surefire.version>
     </properties>
@@ -84,6 +86,7 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven.compiler.version}</version>
                 <configuration>
@@ -95,6 +98,33 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.surefire.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven.jar.version}</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>${main.name}</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>${maven.assembly.version}</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>${main.name}</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
