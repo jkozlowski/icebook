@@ -22,18 +22,19 @@ public class OrdersTest {
 
     @Test
     public void testNewIcebergOrderInvalidParameters() {
-        assertThat(Orders.newIcebergOrder(null, 1, 1, 1, 1), is(Optional.<Order>absent()));
-        assertThat(Orders.newIcebergOrder(Side.BUY, 0, 1, 1, 1), is(Optional.<Order>absent()));
-        assertThat(Orders.newIcebergOrder(Side.BUY, 1, 0, 1, 1), is(Optional.<Order>absent()));
-        assertThat(Orders.newIcebergOrder(Side.BUY, 1, 1, 0, 1), is(Optional.<Order>absent()));
-        assertThat(Orders.newIcebergOrder(Side.BUY, 1, 1, 1, 0), is(Optional.<Order>absent()));
+        assertThat(Orders.newIcebergOrder(1, null, 1, 1, 1), is(Optional.<Order>absent()));
+        assertThat(Orders.newIcebergOrder(0, Side.BUY, 1, 1, 1), is(Optional.<Order>absent()));
+        assertThat(Orders.newIcebergOrder(1, Side.BUY, 0, 1, 1), is(Optional.<Order>absent()));
+        assertThat(Orders.newIcebergOrder(1, Side.BUY, 1, 0, 1), is(Optional.<Order>absent()));
+        assertThat(Orders.newIcebergOrder(1, Side.BUY, 1, 1, 0), is(Optional.<Order>absent()));
+        assertThat(Orders.newIcebergOrder(1, Side.BUY, 1, 12, 13), is(Optional.<Order>absent()));
     }
 
     @Test
     public void testNewLimitOrderInvalidParameters() {
-        assertThat(Orders.newLimitOrder(null, 1, 1, 1), is(Optional.<Order>absent()));
-        assertThat(Orders.newLimitOrder(Side.BUY, 0, 1, 1), is(Optional.<Order>absent()));
-        assertThat(Orders.newLimitOrder(Side.BUY, 1, 0, 1), is(Optional.<Order>absent()));
-        assertThat(Orders.newLimitOrder(Side.BUY, 1, 1, 0), is(Optional.<Order>absent()));
+        assertThat(Orders.newLimitOrder(1, null, 1, 1), is(Optional.<Order>absent()));
+        assertThat(Orders.newLimitOrder(0, Side.BUY, 1, 1), is(Optional.<Order>absent()));
+        assertThat(Orders.newLimitOrder(1, Side.BUY, 0, 1), is(Optional.<Order>absent()));
+        assertThat(Orders.newLimitOrder(1, Side.BUY, 1, 0), is(Optional.<Order>absent()));
     }
 }

@@ -12,8 +12,8 @@ import com.google.common.primitives.Longs;
 import icebook.book.OrderBook.Entry;
 import icebook.book.OrderBooks;
 import icebook.exec.TimeSource;
-import icebook.exec.Trade;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -26,86 +26,48 @@ import static com.google.common.base.Preconditions.checkState;
  * @author Jakub D Kozlowski
  * @since 1.0
  */
-final class IcebergOrder implements Order {
-
-    private final Side side;
-
-    private final long id;
-
-    private final long price;
-
-    private long volume;
+final class IcebergOrder extends AbstractOrder {
 
     private final long peakSize;
 
-    public IcebergOrder(final Side side, final long id, final long price, final long volume, final long peakSize) {
-        this.side = checkNotNull(side);
-        this.id = id;
-        this.price = price;
-        this.volume = volume;
+    /**
+     * Default constructor.
+     *
+     * @param side     {@link Side} of this order.
+     * @param id       id of this order.
+     * @param price    price of this order.
+     * @param volume   current volume of this order.
+     * @param peakSize size of the visible peak.
+     *
+     * @throws NullPointerException     if {@code side} is null.
+     * @throws IllegalArgumentException if any {@code long} argument is {@code <= 0}, or {@code peakSize > volume}.
+     */
+    public IcebergOrder(@Nonnegative final long id,
+                        @Nonnull final Side side,
+                        @Nonnegative final long price,
+                        @Nonnegative final long volume,
+                        @Nonnegative final long peakSize) {
+        super(id, side, price, volume);
+        checkArgument(peakSize <= volume);
         this.peakSize = peakSize;
-    }
-
-    @Override
-    public long getId() {
-        return id;
-    }
-
-    /**
-     * Gets the price.
-     *
-     * @return the price.
-     */
-    @Override
-    public long getPrice() {
-        return price;
-    }
-
-    /**
-     * Gets the volume.
-     *
-     * @return the volume.
-     */
-    @Override
-    public long getVolume() {
-        return volume;
-    }
-
-    @Override
-    public Side getSide() {
-        return side;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean isFilled() {
-        return 0 == volume;
-    }
-
-    @Override
-    public void execute(@Nonnull final Trade trade) {
-        checkNotNull(trade);
-        if (side.isBuy()) {
-            checkArgument(trade.getBuyOrderId() == id);
-        }
-        else {
-            checkArgument(trade.getSellOrderId() == id);
-        }
-
-        checkArgument(volume >= trade.getQuantity());
-
-        volume -= trade.getQuantity();
-    }
-
-    @Override
     public Entry getEntry(@Nonnull final TimeSource timeSource) {
         checkNotNull(timeSource);
         checkState(!isFilled(), "Cannot getEntry() of a filled order.");
-        return OrderBooks.newEntry(id, timeSource.getTime(), side, price, Longs.min(volume, peakSize));
+        return OrderBooks.newEntry(getId(),
+                                   timeSource.getTime(),
+                                   getSide(), getPrice(),
+                                   Longs.min(getVolume(), peakSize));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -113,32 +75,30 @@ final class IcebergOrder implements Order {
 
         IcebergOrder that = (IcebergOrder) o;
 
-        if (id != that.id) return false;
+        if (getId() != that.getId()) return false;
         if (peakSize != that.peakSize) return false;
-        if (price != that.price) return false;
-        if (volume != that.volume) return false;
-        if (side != that.side) return false;
+        if (getPrice() != that.getPrice()) return false;
+        if (getVolume() != that.getVolume()) return false;
+        if (getSide() != that.getSide()) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = side.hashCode();
-        result = 31 * result + (int) (id ^ (id >>> 32));
-        result = 31 * result + (int) (price ^ (price >>> 32));
-        result = 31 * result + (int) (volume ^ (volume >>> 32));
-        result = 31 * result + (int) (peakSize ^ (peakSize >>> 32));
-        return result;
+        return Objects.hashCode(getSide(), getId(), getPrice(), getVolume(), peakSize);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         final ToStringHelper toString = Objects.toStringHelper(this);
-        toString.add("side", side);
-        toString.add("id", id);
-        toString.add("price", price);
-        toString.add("volume", volume);
+        toString.add("side", getSide());
+        toString.add("id", getId());
+        toString.add("price", getPrice());
+        toString.add("volume", getVolume());
         toString.add("peakSize", peakSize);
         return toString.toString();
     }

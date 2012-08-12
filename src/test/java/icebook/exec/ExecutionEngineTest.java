@@ -35,15 +35,15 @@ public class ExecutionEngineTest {
     private static final Entry buyEntry = OrderBooks.newEntry(1, 123, Side.BUY, PRICE, VOLUME);
 
     private static final Order buyIceberg
-            = Orders.newIcebergOrder(Side.BUY, 1, PRICE, VOLUME, 1).get();
+            = Orders.newIcebergOrder(1, Side.BUY, PRICE, VOLUME, 1).get();
 
     private static final Order sellIceberg
-            = Orders.newIcebergOrder(Side.SELL, 1, PRICE, VOLUME, 1).get();
+            = Orders.newIcebergOrder(1, Side.SELL, PRICE, VOLUME, 1).get();
 
-    private static final Order buyLimit = Orders.newLimitOrder(Side.BUY, 1, PRICE, VOLUME).get();
+    private static final Order buyLimit = Orders.newLimitOrder(1, Side.BUY,  PRICE, VOLUME).get();
 
     private static final Order sellLimit
-            = Orders.newLimitOrder(Side.SELL, 1, PRICE, VOLUME).get();
+            = Orders.newLimitOrder(1, Side.SELL, PRICE, VOLUME).get();
 
     private static final ExecutionEngine emptyEngine = new ExecutionEngine(OrderBooks.newDefaultOrderBook());
 

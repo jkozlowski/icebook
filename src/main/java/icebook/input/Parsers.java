@@ -73,7 +73,7 @@ public final class Parsers {
     static final Parser<Optional<Order>> icebergOrder() {
         return new Mapper<Optional<Order>>() {
             Optional<Order> map(Side side, String s, String s1, String s2, String s3) {
-                return Orders.newIcebergOrder(side, Long.parseLong(s), Long.parseLong(s1), Long.parseLong(s2),
+                return Orders.newIcebergOrder(Long.parseLong(s), side, Long.parseLong(s1), Long.parseLong(s2),
                                               Long.parseLong(s3));
             }
         }.sequence(
@@ -107,7 +107,7 @@ public final class Parsers {
     static final Parser<Optional<Order>> limitOrder() {
         return new Mapper<Optional<Order>>() {
             Optional<Order> map(Side side, String s, String s1, String s2) {
-                return Orders.newLimitOrder(side, Long.parseLong(s), Long.parseLong(s1), Long.parseLong(s2));
+                return Orders.newLimitOrder(Long.parseLong(s), side, Long.parseLong(s1), Long.parseLong(s2));
             }
         }.sequence(
                 followedByComma(org.codehaus.jparsec.Parsers.or(buy(), sell())),

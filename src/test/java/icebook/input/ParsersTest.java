@@ -28,14 +28,14 @@ public class ParsersTest {
     @Test
     public void testNewGrammar() {
         final Parser<Optional<Order>> grammar = Parsers.newOrderParser();
-        assertThat(grammar.parse("B,100345,5103,100000,10000"),
-                   is(Orders.newIcebergOrder(Side.BUY, 100345, 5103, 100000, 10000)));
-        assertThat(grammar.parse("S,5103,100000,10000,100345"),
-                   is(Orders.newIcebergOrder(Side.SELL, 5103, 100000, 10000, 100345)));
+        assertThat(grammar.parse("B,100345,5103,100000,10123"),
+                   is(Orders.newIcebergOrder(100345, Side.BUY, 5103, 100000, 10123)));
+        assertThat(grammar.parse("S,5103,100000,10000,10345"),
+                   is(Orders.newIcebergOrder(5103, Side.SELL, 100000, 10000, 10345)));
         assertThat(grammar.parse("B,100322,5103,7500"),
-                   is(Orders.newLimitOrder(Side.BUY, 100322, 5103, 7500)));
+                   is(Orders.newLimitOrder(100322, Side.BUY, 5103, 7500)));
         assertThat(grammar.parse("S,5103,7500,100322"),
-                   is(Orders.newLimitOrder(Side.SELL, 5103, 7500, 100322)));
+                   is(Orders.newLimitOrder(5103, Side.SELL, 7500, 100322)));
         assertThat(grammar.parse(" \n\t\r").isPresent(), is(Boolean.FALSE));
         assertThat(grammar.parse("  \n  # ").isPresent(), is(Boolean.FALSE));
         assertThat(grammar.parse("   # ").isPresent(), is(Boolean.FALSE));
@@ -46,16 +46,16 @@ public class ParsersTest {
     public void testIcebergOrderParser() {
         final Parser<Optional<Order>> limitOrder = Parsers.icebergOrder();
         assertThat(limitOrder.parse("B,100345,5103,100000,10000"),
-                   is(Orders.newIcebergOrder(Side.BUY, 100345, 5103, 100000, 10000)));
+                   is(Orders.newIcebergOrder(100345, Side.BUY, 5103, 100000, 10000)));
         assertThat(limitOrder.parse("S,5103,100000,10000,100345"),
-                   is(Orders.newIcebergOrder(Side.SELL, 5103, 100000, 10000, 100345)));
+                   is(Orders.newIcebergOrder(5103, Side.SELL, 100000, 10000, 100345)));
     }
 
     @Test
     public void testLimitOrderParser() {
         final Parser<Optional<Order>> limitOrder = Parsers.limitOrder();
-        assertThat(limitOrder.parse("B,100322,5103,7500"), is(Orders.newLimitOrder(Side.BUY, 100322, 5103, 7500)));
-        assertThat(limitOrder.parse("S,5103,7500,100322"), is(Orders.newLimitOrder(Side.SELL, 5103, 7500, 100322)));
+        assertThat(limitOrder.parse("B,100322,5103,7500"), is(Orders.newLimitOrder(100322, Side.BUY, 5103, 7500)));
+        assertThat(limitOrder.parse("S,5103,7500,100322"), is(Orders.newLimitOrder(5103, Side.SELL, 7500, 100322)));
     }
 
     @Test(expectedExceptions = NullPointerException.class)
