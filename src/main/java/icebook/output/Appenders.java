@@ -60,7 +60,8 @@ public final class Appenders {
      * +-----------------------------------------------------------------+
      * </pre>
      *
-     * <p>If both {@code sells} and {@code buys} are empty, this method will append an empty table to {@code out}.</p>
+     * <p>If both {@code sells} and {@code buys} are empty, this method will append an empty table to {@code out}.
+     * <em>This method will explicitly flush {@code out}</em>.</p>
      *
      * @param out   {@link Appendable} to append to.
      * @param sells {@link Side#SELL} {@link Entry}ies to render.
@@ -149,7 +150,8 @@ public final class Appenders {
      *
      * e.g. <pre>100322,100345,5103,7500</pre>
      *
-     * <p>If {@code trades} is empty, this method will not append anything to {@code out}, but may flush it.</p>
+     * <p>If {@code trades} is empty, this method will not append anything to {@code out}. <em>This method will
+     * explicitly flush {@code out}</em>.</p>
      *
      * @param out    {@link Appendable} to append to.
      * @param trades {@link Trade}s to render.
@@ -168,6 +170,8 @@ public final class Appenders {
         for (final Trade t : trades) {
             format.format("%d,%d,%d,%d%n", t.getBuyOrderId(), t.getSellOrderId(), t.getPrice(), t.getQuantity());
         }
+
+        format.flush();
 
         return out;
     }

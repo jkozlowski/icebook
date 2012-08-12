@@ -14,6 +14,7 @@ import icebook.exec.ExecutionEngine;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.nio.charset.Charset;
 
 /**
@@ -53,20 +54,29 @@ public final class Main {
             System.exit(-1);
         }
 
+        final PrintWriter out = new PrintWriter(System.out, true);
+        final PrintWriter err = new PrintWriter(System.err, true);
+
         try {
             final ExecutionEngine engine = new ExecutionEngine(OrderBooks.newDefaultOrderBook());
-            final OrderLineProcessor processor = new OrderLineProcessor(System.out, System.err, engine);
+            final OrderLineProcessor processor = new OrderLineProcessor(out, err, engine);
             CharStreams.readLines(newSystemInInputSupplier(), processor);
         }
         catch (IOException e) {
             System.err.print("We hit an IOException: ");
-            e.printStackTrace(System.err);
+            e.printStackTrace(err);
             System.exit(-1);
         }
         catch (Throwable e) {
             System.err.print("There was an unrecoverable error: ");
-            e.printStackTrace(System.err);
+            e.printStackTrace(err);
             System.exit(-1);
+        }
+        finally {
+            out.flush();
+            out.close();
+            err.flush();
+            err.close();
         }
     }
 }
