@@ -24,15 +24,18 @@ import java.nio.charset.Charset;
  */
 public final class Main {
 
+    private Main() {
+    }
+
     /**
      * Gets an {@link InputSupplier} for {@link System#in}.
      *
      * @return {@link InputSupplier} for {@link System#in}.
      */
-    static InputSupplier<InputStreamReader> newStdinInputSupplier() {
+    static InputSupplier<InputStreamReader> newSystemInInputSupplier() {
         return CharStreams.newReaderSupplier(new InputSupplier<InputStream>() {
             @Override
-            public InputStream getInput() throws IOException {
+            public InputStream getInput() {
                 return System.in;
             }
         }, Charset.defaultCharset());
@@ -53,7 +56,7 @@ public final class Main {
         try {
             final ExecutionEngine engine = new ExecutionEngine(OrderBooks.newDefaultOrderBook());
             final OrderLineProcessor processor = new OrderLineProcessor(System.out, System.err, engine);
-            CharStreams.readLines(newStdinInputSupplier(), processor);
+            CharStreams.readLines(newSystemInInputSupplier(), processor);
         }
         catch (IOException e) {
             System.err.print("We hit an IOException: ");
