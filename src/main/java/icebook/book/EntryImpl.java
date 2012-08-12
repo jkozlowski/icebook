@@ -15,6 +15,7 @@ import icebook.order.Side;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -25,6 +26,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Jakub D Kozlowski
  * @since 1.0
  */
+@Immutable
 final class EntryImpl implements OrderBook.Entry {
 
     private final long id;
@@ -124,15 +126,15 @@ final class EntryImpl implements OrderBook.Entry {
      */
     @Override
     public Entry execute(@Nonnull final Trade trade) {
-        checkNotNull(trade);
+        checkNotNull(trade, "trade cannot be null");
         if (side.isBuy()) {
-            checkArgument(trade.getBuyOrderId() == id);
+            checkArgument(trade.getBuyOrderId() == id, "trade does not refer to this entry.");
         }
         else {
-            checkArgument(trade.getSellOrderId() == id);
+            checkArgument(trade.getSellOrderId() == id, "trade does not refer to this entry.");
         }
 
-        checkArgument(volume >= trade.getQuantity());
+        checkArgument(volume >= trade.getQuantity(), "trade executes more quantity than the volume of this entry.");
 
         return new EntryImpl(id, timestamp, side, price, volume - trade.getQuantity());
     }

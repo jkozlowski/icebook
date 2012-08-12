@@ -6,13 +6,16 @@
 
 package icebook.book;
 
+import com.google.common.base.Objects;
 import icebook.book.OrderBook.Entry;
 import icebook.exec.Trade;
 import icebook.order.Side;
 import org.testng.annotations.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasToString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 
@@ -28,9 +31,15 @@ public class EntryImplTest {
 
     private static final long PRICE = 12;
 
-    private static final Entry SELL = new EntryImpl(1, TIMESTAMP, Side.SELL, PRICE, 130);
+    private static final long VOLUME = 130;
 
-    private static final Entry BUY = new EntryImpl(1, TIMESTAMP, Side.BUY, PRICE, 130);
+    private static final long SELL_ID = 1;
+
+    private static final long BUY_ID = 123;
+
+    private static final Entry SELL = new EntryImpl(SELL_ID, TIMESTAMP, Side.SELL, PRICE, VOLUME);
+
+    private static final Entry BUY = new EntryImpl(BUY_ID, TIMESTAMP, Side.BUY, PRICE, VOLUME);
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testConstructorWrongId() {
@@ -59,23 +68,42 @@ public class EntryImplTest {
 
     @Test
     public void testConstructor() {
-        final Entry entry = new EntryImpl(1, 123, Side.SELL, PRICE, 130);
-        assertThat(entry.getId(), is(1L));
-        assertThat(entry.getSide(), is(Side.SELL));
-        assertThat(entry.getPrice(), is(12L));
-        assertThat(entry.getVolume(), is(130L));
-    }
-
-    @Test
-    public void testIsFilledNotFilled() {
-        final Entry entry = new EntryImpl(1, TIMESTAMP, Side.SELL, PRICE, 130);
-        assertThat(entry.execute(new Trade(123, 1, PRICE, 130)).isFilled(), is(true));
+        assertThat(SELL.getId(), is(SELL_ID));
+        assertThat(SELL.getTimestamp(), is(TIMESTAMP));
+        assertThat(SELL.getSide(), is(Side.SELL));
+        assertThat(SELL.getPrice(), is(PRICE));
+        assertThat(SELL.getVolume(), is(VOLUME));
     }
 
     @Test
     public void testIsFilledFilled() {
+        assertThat(SELL.execute(new Trade(123, 1, PRICE, VOLUME)).isFilled(), is(true));
+    }
+
+    @Test
+    public void testIsFilledNotFilled() {
         assertThat(SELL.isFilled(), is(false));
         assertThat(BUY.isFilled(), is(false));
+    }
+
+    @Test(expectedExceptions = NullPointerException.class)
+    public void testExecuteNullTrade() {
+        SELL.execute(null);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testExecuteSellSellIdWrong() {
+        SELL.execute(new Trade(BUY_ID, SELL_ID + 1, PRICE, VOLUME));
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testExecuteBuyBuyIdWrong() {
+        BUY.execute(new Trade(BUY_ID + 1, SELL_ID, PRICE, VOLUME));
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testExecuteOverExecute() {
+        BUY.execute(new Trade(BUY_ID, SELL_ID, PRICE, VOLUME + 1));
     }
 
     @Test(expectedExceptions = NullPointerException.class)
@@ -116,5 +144,29 @@ public class EntryImplTest {
     public void testCompareToSamePriceLaterTimestamp() {
         assertThat(SELL.compareTo(OrderBooks.newEntry(1, TIMESTAMP + 1, Side.SELL, PRICE, 3)), lessThan(0));
         assertThat(BUY.compareTo(OrderBooks.newEntry(1, TIMESTAMP + 1, Side.BUY, PRICE, 3)), lessThan(0));
+    }
+
+    @Test
+    public void testEquals() {
+        assertThat(SELL.equals(null), is(false));
+        assertThat(SELL.equals(new Object()), is(false));
+        assertThat(SELL.equals(new EntryImpl(SELL_ID + 1, TIMESTAMP, Side.SELL, PRICE, VOLUME)), is(false));
+        assertThat(SELL.equals(new EntryImpl(SELL_ID, TIMESTAMP + 1, Side.SELL, PRICE, VOLUME)), is(false));
+        assertThat(SELL.equals(new EntryImpl(SELL_ID, TIMESTAMP, Side.BUY, PRICE, VOLUME)), is(false));
+        assertThat(SELL.equals(new EntryImpl(SELL_ID, TIMESTAMP, Side.SELL, PRICE + 1, VOLUME)), is(false));
+        assertThat(SELL.equals(new EntryImpl(SELL_ID, TIMESTAMP, Side.SELL, PRICE, VOLUME + 1)), is(false));
+        assertThat(SELL.equals(SELL), is(true));
+        assertThat(SELL.equals(new EntryImpl(SELL_ID, TIMESTAMP, Side.SELL, PRICE, VOLUME)), is(true));
+    }
+
+    @Test
+    public void testToString() {
+        assertThat(SELL, hasToString(equalTo("EntryImpl{id=" + SELL_ID + ", timestamp=" + TIMESTAMP + ", side=SELL" +
+                                                     ", price=" + PRICE + ", volume=" + VOLUME + "}")));
+    }
+
+    @Test
+    public void testHashCode() {
+        assertThat(SELL.hashCode(), is(Objects.hashCode(SELL_ID, TIMESTAMP, Side.SELL, PRICE, VOLUME)));
     }
 }
