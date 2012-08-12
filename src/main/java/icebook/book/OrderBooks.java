@@ -33,7 +33,8 @@ public final class OrderBooks {
      * @param volume    volume of this {@link Entry}.
      *
      * @throws NullPointerException     if {@code side} is null.
-     * @throws IllegalArgumentException if any {@code long} argument is {@code <= 0}
+     * @throws IllegalArgumentException if {@code id}, {@code timestamp} or {@code price} is {@code <= 0},
+     *                                  or {@code volume} is {@code < 0}.
      */
     public static final Entry newEntry(@Nonnegative final long id,
                                        @Nonnegative final long timestamp,
@@ -46,7 +47,7 @@ public final class OrderBooks {
     /**
      * Gets a default {@link OrderBook} implementation.
      *
-     * @return new {@link OrderBook}.
+     * @return default {@link OrderBook} implementation.
      */
     public static final OrderBook newDefaultOrderBook() {
         return new DefaultOrderBook();
