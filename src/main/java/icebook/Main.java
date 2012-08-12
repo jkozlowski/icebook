@@ -10,21 +10,14 @@ import com.google.common.io.CharStreams;
 import com.google.common.io.InputSupplier;
 import icebook.book.OrderBooks;
 import icebook.exec.ExecutionEngine;
-import icebook.input.Parsers;
-import icebook.output.Appenders;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.util.SortedSet;
 
 /**
- * Main entry point to the icebook simulator. The simulator will read the input from {@link System#in} and parse it
- * according to the grammar defined by {@link Parsers#newOrderParser()}. Every successfully parsed order will be
- * applied to the order book and any trade messages will be printed to {@link System#out},
- * followed by the current state of the book as defined by {@link Appenders#append(Appendable, SortedSet,
- * SortedSet)}. Any error messages will be forwarded to {@link System#err}.
+ * Main entry point to the icebook simulator.
  *
  * @author Jakub D Kozlowski
  * @since 1.0
