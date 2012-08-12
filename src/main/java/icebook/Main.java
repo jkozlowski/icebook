@@ -7,12 +7,16 @@
 package icebook;
 
 import com.google.common.io.CharStreams;
+import com.google.common.io.InputSupplier;
 import icebook.book.OrderBooks;
 import icebook.exec.ExecutionEngine;
 import icebook.input.Parsers;
 import icebook.output.Appenders;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.SortedSet;
 
 /**
@@ -26,6 +30,20 @@ import java.util.SortedSet;
  * @since 1.0
  */
 public final class Main {
+
+    /**
+     * Gets an {@link InputSupplier} for {@link System#in}.
+     *
+     * @return {@link InputSupplier} for {@link System#in}.
+     */
+    static InputSupplier<InputStreamReader> newStdinInputSupplier() {
+        return CharStreams.newReaderSupplier(new InputSupplier<InputStream>() {
+            @Override
+            public InputStream getInput() throws IOException {
+                return System.in;
+            }
+        }, Charset.defaultCharset());
+    }
 
     /**
      * Main entry point to the icebook simulator.
@@ -42,7 +60,7 @@ public final class Main {
         try {
             final ExecutionEngine engine = new ExecutionEngine(OrderBooks.newDefaultOrderBook());
             final OrderLineProcessor processor = new OrderLineProcessor(System.out, System.err, engine);
-            CharStreams.readLines(Suppliers.newStdinInputSupplier(), processor);
+            CharStreams.readLines(newStdinInputSupplier(), processor);
         }
         catch (IOException e) {
             System.err.print("We hit an IOException: ");
