@@ -11,6 +11,7 @@ import com.google.common.io.InputSupplier;
 import com.google.common.io.LineProcessor;
 import icebook.book.OrderBooks;
 import icebook.exec.ExecutionEngine;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -28,8 +29,18 @@ import static org.hamcrest.Matchers.is;
  */
 public class IntegrationTest {
 
-    @Test
-    public void testIntegration() throws IOException {
+    private static final String ENGINES_PROVIDER = "execution-engines-data-provider";
+
+    @DataProvider(name = ENGINES_PROVIDER)
+    public static ExecutionEngine[][] getOrderBooks() {
+        final ExecutionEngine[][] engines = new ExecutionEngine[2][1];
+        engines[0][0] = new ExecutionEngine(OrderBooks.newDefaultOrderBook());
+        engines[1][0] = new ExecutionEngine(OrderBooks.newOptimisedOrderBook());
+        return engines;
+    }
+
+    @Test(dataProvider = ENGINES_PROVIDER)
+    public void testIntegration(final ExecutionEngine engine) throws IOException {
         final String input
                 = "# BUYS\n"
                 + "B,1,99,50000\n"
@@ -153,7 +164,6 @@ public class IntegrationTest {
 
         final StringBuilder out = new StringBuilder();
         final StringBuilder err = new StringBuilder();
-        final ExecutionEngine engine = new ExecutionEngine(OrderBooks.newDefaultOrderBook());
         final LineProcessor<Void> processor = new OrderLineProcessor(out, err, engine);
         final InputSupplier<StringReader> inputSupplier = new InputSupplier<StringReader>() {
             @Override

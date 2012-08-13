@@ -52,4 +52,14 @@ public final class OrderBooks {
     public static final OrderBook newDefaultOrderBook() {
         return new DefaultOrderBook();
     }
+
+    /**
+     * Gets an optimised {@link OrderBook} implementation, that improves some operations to constant time,
+     * at the cost of greater memory requirements.
+     *
+     * @return optimised {@link OrderBook} implementation.
+     */
+    public static final OrderBook newOptimisedOrderBook() {
+        return new OptimisedOrderBook();
+    }
 }

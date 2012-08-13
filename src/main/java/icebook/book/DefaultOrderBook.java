@@ -14,6 +14,7 @@ import javax.annotation.Nonnull;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -23,6 +24,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @since 1.0
  */
 final class DefaultOrderBook implements OrderBook {
+
+    private long lastTimestamp = Long.MIN_VALUE;
 
     private final Queue<Entry> buys;
 
@@ -42,7 +45,9 @@ final class DefaultOrderBook implements OrderBook {
     @Override
     public Entry insert(@Nonnull final Entry entry) {
         checkNotNull(entry, "entry cannot be null.");
+        checkArgument(lastTimestamp < entry.getTimestamp());
         getQueue(entry).add(entry);
+        lastTimestamp = entry.getTimestamp();
         return entry;
     }
 
@@ -62,6 +67,15 @@ final class DefaultOrderBook implements OrderBook {
     public Entry remove(@Nonnull final Side side) {
         checkNotNull(side, "side cannot be null.");
         return getQueue(side).remove();
+    }
+
+    @Override
+    public Entry replaceHead(@Nonnull final Entry newHead) {
+        checkNotNull(newHead, "newHead cannot be null.");
+        final Entry oldHead = getQueue(newHead.getSide()).remove();
+        checkArgument(oldHead.getTimestamp() >= newHead.getTimestamp());
+        getQueue(newHead.getSide()).add(newHead);
+        return oldHead;
     }
 
     /**

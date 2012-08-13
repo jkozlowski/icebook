@@ -13,6 +13,7 @@ import icebook.order.Side;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
+import java.util.NoSuchElementException;
 
 /**
  * Maintains sorted sets of {@link Side#SELL} and {@link Side#BUY} {@link Entry}ies.
@@ -97,14 +98,15 @@ public interface OrderBook {
     }
 
     /**
-     * Inserts an {@link Entry} into this {@link OrderBook}. It is the responsibility of the user of this {@link
-     * OrderBook} to ensure that no entry exists already with this {@link Entry#getId()}.
+     * Inserts an {@link Entry} into this {@link OrderBook}.
      *
      * @param entry entry to insert.
      *
      * @return reference to this {@code entry}.
      *
-     * @throws NullPointerException if {@code order} is null.
+     * @throws NullPointerException     if {@code order} is null.
+     * @throws IllegalArgumentException if the timestamp of {@code entry} is not strictly older than the
+     *                                  current oldest {@link Entry}.
      */
     Entry insert(final @Nonnull Entry entry);
 
@@ -126,10 +128,25 @@ public interface OrderBook {
      *
      * @return removed {@link Entry}.
      *
-     * @throws NullPointerException  if {@code side} is null.
-     * @throws IllegalStateException if this {@code side} is empty.
+     * @throws NullPointerException   if {@code side} is null.
+     * @throws NoSuchElementException if this {@code side} is empty.
      */
     Entry remove(@Nonnull final Side side);
+
+    /**
+     * Removes the first {@link Entry} on the {@code side} of this {@code newHead} and replaces it with {@code
+     * newHead}.
+     *
+     * @param newHead {@link Entry} to put at the head.
+     *
+     * @return removed {@link Entry}.
+     *
+     * @throws NullPointerException     if {@code newHead} is null.
+     * @throws NoSuchElementException   if side of this {@code newHead} is empty.
+     * @throws IllegalArgumentException if {@code newHead}'s timestamp is not {@code <=} to {@code oldHead}'s
+     *                                  timestamp.
+     */
+    Entry replaceHead(@Nonnull final Entry newHead);
 
     /**
      * Checks if the book is empty on this {@code side}.
