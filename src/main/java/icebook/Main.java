@@ -58,7 +58,7 @@ public final class Main {
         final PrintWriter err = new PrintWriter(System.err, true);
 
         try {
-            final ExecutionEngine engine = new ExecutionEngine(OrderBooks.newDefaultOrderBook());
+            final ExecutionEngine engine = new ExecutionEngine(OrderBooks.newOptimisedOrderBook());
             final OrderLineProcessor processor = new OrderLineProcessor(out, err, engine);
             CharStreams.readLines(newSystemInInputSupplier(), processor);
         }

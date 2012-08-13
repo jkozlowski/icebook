@@ -5,7 +5,7 @@
  */
 
 /**
- * Defines the interface for {@link OrderBook}s and {@link OrderBook.Entry}ies, and provides default implementations
+ * Defines the interface for {@link OrderBook}s and {@link OrderBook.Entry}ies, and provides implementations
  * through {@link OrderBooks} factory.
  *
  * @author Jakub D Kozlowski
