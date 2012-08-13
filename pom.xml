@@ -19,7 +19,6 @@
             <roles>
                 <role>Developer</role>
             </roles>
-            <organization>UCL</organization>
         </developer>
     </developers>
 
@@ -53,11 +52,6 @@
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
             <version>${jsr305.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>jparsec</groupId>
-            <artifactId>jparsec</artifactId>
-            <version>${jparsec.version}</version>
         </dependency>
         <dependency>
             <groupId>cglib</groupId>

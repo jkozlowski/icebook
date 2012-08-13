@@ -12,7 +12,6 @@ import icebook.order.Orders;
 import icebook.order.Side;
 import org.codehaus.jparsec.Parser;
 import org.codehaus.jparsec.Scanners;
-import org.codehaus.jparsec._;
 import org.codehaus.jparsec.functors.Map;
 import org.codehaus.jparsec.functors.Map2;
 import org.codehaus.jparsec.misc.Mapper;
@@ -129,7 +128,7 @@ public final class Parsers {
      */
     static final <T> Parser<T> followedByComma(final @Nonnull Parser<T> toFollow) {
         checkNotNull(toFollow, "toFollow cannot be null.");
-        return org.codehaus.jparsec.Parsers.sequence(toFollow, Scanners.isChar(','), Parsers.<T>mapFirst());
+        return org.codehaus.jparsec.Parsers.sequence(toFollow, Scanners.isChar(','), Parsers.<T, Void>mapFirst());
     }
 
     /**
@@ -176,9 +175,9 @@ public final class Parsers {
         return Scanners.pattern(Patterns.many(CharPredicates.IS_WHITESPACE), "zero or more whitespaces")
                 .next(Scanners.isChar('#'))
                 .next(Scanners.ANY_CHAR.many().map(
-                        new Map<List<_>, Optional<Order>>() {
+                        new Map<List<Void>, Optional<Order>>() {
                             @Override
-                            public Optional<Order> map(List<_> list) {
+                            public Optional<Order> map(List<Void> list) {
                                 return Optional.absent();
                             }
                         }));
@@ -189,16 +188,17 @@ public final class Parsers {
      *
      * @param t   value to return.
      * @param <T> type of the value to return.
+     * @param <S> type of value to ignore.
      *
      * @return {@link Map} that returns {@code t}.
      *
      * @throws NullPointerException if {@code t} is null.
      */
-    static final <T> Map<_, T> mapTo(@Nonnull final T t) {
+    static final <T, S> Map<S, T> mapTo(@Nonnull final T t) {
         checkNotNull(t, "t cannot be null.");
-        return new Map<_, T>() {
+        return new Map<S, T>() {
             @Override
-            public T map(_ p0) {
+            public T map(S p0) {
                 return t;
             }
         };
@@ -208,13 +208,14 @@ public final class Parsers {
      * Gets a {@link Map2} that returns the first argument.
      *
      * @param <T> type of the argument.
+     * @param <S> type of value to ignore.
      *
      * @return {@link Map2} that returns the first argument.
      */
-    static final <T> Map2<T, _, T> mapFirst() {
-        return new Map2<T, _, T>() {
+    static final <T, S> Map2<T, S, T> mapFirst() {
+        return new Map2<T, S, T>() {
             @Override
-            public T map(T t, _ p1) {
+            public T map(T t, S p1) {
                 return t;
             }
         };

@@ -23,6 +23,9 @@ you can revert to using the default implementation by changing the implementatio
 implementations however, pass the same battery of tests, therefore if something is not behaving how it should,
 it is most likely a bug in *icebook.exec.ExecutionEngine*; Please create an issue if you find any bugs.
 
+### licencing ###
+This project includes the JParsec 2 source (http://jparsec.codehaus.org/).
+
 ### requirements ###
 * Apache Maven
 * Java JDK 1.6

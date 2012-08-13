@@ -110,7 +110,7 @@ public class ParsersTest {
 
     @Test
     public void testMapFirst() {
-        assertThat(Parsers.<Side>mapFirst().map(Side.SELL, null), is(Side.SELL));
+        assertThat(Parsers.<Side, Void>mapFirst().map(Side.SELL, null), is(Side.SELL));
     }
 
     @Test
