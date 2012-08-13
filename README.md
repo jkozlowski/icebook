@@ -17,6 +17,12 @@ unspecified stock instrument.
 Similarly, prices are assumed to be quoted in pennies and sub-penny prices are prohibited; hence,
 prices are simply assumed to be *long* values.
 
+The default implementation uses a late addition to the system: *icebook.book.OptimisedOrderBook*,
+which was implemented to a fixed deadline, just to challenge myself. If this implementation is doing something wrong,
+you can revert to using the default implementation by changing the implementation in *icebook.Main*. Both
+implementations however, pass the same battery of tests, therefore if something is not behaving how it should,
+it is most likely a bug in *icebook.exec.ExecutionEngine*; Please create an issue if you find any bugs.
+
 ### requirements ###
 * Apache Maven
 * Java JDK 1.6
