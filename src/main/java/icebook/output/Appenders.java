@@ -162,7 +162,7 @@ public final class Appenders {
      * <p>If {@code trades} is empty, this method will not append anything to {@code out}. <em>This method will
      * explicitly flush {@code out}</em>.</p>
      *
-     * <p>If {@code trades} contains multiple trades between the same id's, those will be collapsed into a single
+     * <p>If {@code trades} contains multiple trades between the same id's, those will be merged into a single
      * trade.</p>
      *
      * @param out    {@link Appendable} to append to.
@@ -171,6 +171,7 @@ public final class Appenders {
      * @return a reference to {@code out}.
      *
      * @throws NullPointerException if any argument is null.
+     * @see icebook.output
      */
     public static Appendable append(@Nonnull final Appendable out, @Nonnull final Collection<Trade> trades) {
 
@@ -179,7 +180,7 @@ public final class Appenders {
 
         final Formatter format = new Formatter(out, Locale.ENGLISH);
 
-        // Collapse trades.
+        // Merge trades.
         final BiMap<Long, Wrapper<Trade>> tradesBiMap = HashBiMap.create();
         long counter = 0;
         for (final Trade t : trades) {
