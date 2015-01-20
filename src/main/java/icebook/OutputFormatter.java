@@ -61,7 +61,7 @@ public final class OutputFormatter {
     public void append(final Trade trade) {
         notNull(trade, "trade");
         // No actual formatting, just substitution
-        format.format("%s,%s,%s,%s\n",
+        format.format("%s,%s,%s,%s%n",
                       trade.getTradeKey().getBuyOrderId().value(),
                       trade.getTradeKey().getSellOrderId().value(),
                       trade.getTradeKey().getPrice().value(),
