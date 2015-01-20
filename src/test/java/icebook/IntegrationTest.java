@@ -1,46 +1,18 @@
-/*
- * Copyright 2012 Jakub Dominik Kozlowski <mail@jakub-kozlowski.com>
- * Distributed under the The MIT License.
- * (See accompanying file LICENSE)
- */
-
 package icebook;
 
-import com.google.common.io.CharStreams;
-import com.google.common.io.InputSupplier;
-import com.google.common.io.LineProcessor;
-import icebook.book.OrderBooks;
-import icebook.exec.ExecutionEngine;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
 
 /**
- * Tests the integration of the whole system, by using a {@link OrderLineProcessor} to parse input and check expected
- * err and out.
- *
- * @author Jakub D Kozlowski
- * @since 1.0
+ * Tests the integration of the whole system.
  */
-public class IntegrationTest {
+public final class IntegrationTest {
 
-    private static final String ENGINES_PROVIDER = "execution-engines-data-provider";
-
-    @DataProvider(name = ENGINES_PROVIDER)
-    public static ExecutionEngine[][] getOrderBooks() {
-        final ExecutionEngine[][] engines = new ExecutionEngine[2][1];
-        engines[0][0] = new ExecutionEngine(OrderBooks.newDefaultOrderBook());
-        engines[1][0] = new ExecutionEngine(OrderBooks.newOptimisedOrderBook());
-        return engines;
-    }
-
-    @Test(dataProvider = ENGINES_PROVIDER)
-    public void testIntegration(final ExecutionEngine engine) throws IOException {
+    @Test
+    public void testIntegration() throws IOException {
         final String input
                 = "# BUYS\n"
                 + "B,1,99,50000\n"
@@ -137,8 +109,8 @@ public class IntegrationTest {
                 + "|         1|       50,000|     99|       |             |          |\n"
                 + "|         2|       25,500|     98|       |             |          |\n"
                 + "+-----------------------------------------------------------------+\n"
-                + "9,10,100,20000\n"
                 + "6,10,100,15000\n"
+                + "9,10,100,20000\n"
                 + "+-----------------------------------------------------------------+\n"
                 + "| BUY                            | SELL                           |\n"
                 + "| Id       | Volume      | Price | Price | Volume      | Id       |\n"
@@ -149,30 +121,10 @@ public class IntegrationTest {
                 + "|         2|       25,500|     98|       |             |          |\n"
                 + "+-----------------------------------------------------------------+\n";
 
-        final String expectedErr
-                = "Could not parse line: '# BUYS'\n"
-                + "Could not parse line: ''\n"
-                + "Could not parse line: '# SELLS'\n"
-                + "Could not parse line: ''\n"
-                + "Could not parse line: '# Iceberg Order'\n"
-                + "Could not parse line: ''\n"
-                + "Could not parse line: '# Aggressive SELL LIMIT'\n"
-                + "Could not parse line: ''\n"
-                + "Could not parse line: '# Second Iceberg Order'\n"
-                + "Could not parse line: ''\n"
-                + "Could not parse line: '# Now aggressive SELL LIMIT enters book'\n";
+        final StringReader in = new StringReader(input);
+        final StringWriter out = new StringWriter(expectedOut.length());
+        new Main(new BufferedReader(in), new PrintWriter(out)).run();
 
-        final StringBuilder out = new StringBuilder();
-        final StringBuilder err = new StringBuilder();
-        final LineProcessor<Void> processor = new OrderLineProcessor(out, err, engine);
-        final InputSupplier<StringReader> inputSupplier = new InputSupplier<StringReader>() {
-            @Override
-            public StringReader getInput() throws IOException {
-                return new StringReader(input);
-            }
-        };
-        CharStreams.readLines(inputSupplier, processor);
-        assertThat(err.toString(), is(expectedErr));
-        assertThat(out.toString(), is(expectedOut));
+        assertEquals(expectedOut, out.toString());
     }
 }
